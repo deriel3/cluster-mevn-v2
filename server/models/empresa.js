@@ -1,0 +1,77 @@
+const mongoose= require('mongoose');
+const {Schema}= mongoose;
+
+const empresa=new Schema({
+    ruc:String,
+    razon_social:String,
+    descripcion:String,
+    estado:{
+        type:Number,
+        default:0
+    },
+    cantidad_favoritos:{
+        type:Number,
+        default:0
+    },
+    nombre_comercial:String,
+    url_logo:String,
+    forma_contacto:[{
+        tipo_dispositivo:String,
+        contacto:String,
+        persona:String,
+    }],
+    locacion:[{
+        nombre:String,
+        tipo_sede:String,
+        direccion:String
+    }],
+    categorias:[{
+        categoria:String
+    }],
+    producto:[{
+        tipo_producto:{
+            default:"",
+            type:String
+        },
+        tipo_calzado:{
+            default:"",
+            type:String
+        },
+        material:{
+            default:"",
+            type:String
+        },
+        genero:{
+            default:"",
+            type:String
+        },
+        codigo:String,
+        marca:String,
+        nombre:String,
+        descripcion:String,
+        categoria:String,
+        imagen_portada:String,
+        estado:{
+            type:Number,
+            default:0
+        },
+        galeria:[{url_imagen:String}],
+        precios:[{
+            precio:String,
+            descripcion:{
+                type:String,
+                default:""
+            }
+        }],
+        norma_tecnica:{
+            capellada:String,
+            forro_interno:String,
+            plantilla:String,
+            suela:String
+        },
+        colores:[{color:String}]
+    }],
+    user_id:String,
+});
+
+module.exports=mongoose.model('Empresa',empresa);
