@@ -2,10 +2,12 @@ const mongoose= require('mongoose');
 const {Schema}= mongoose;
 
 const usuario=new Schema({
-    refresh_token:String,
     usuario:String,
     contraseña:String,
-    estado:Number,
+    estado:{
+        type:Number,
+        default:1
+    },
     sesiones_dispositivos:[{name:String,fecha_ingreso:{type:Date,default:new Date()},nombre:{type:String,default:"SIN NOMBRE"}}],
     nombre:String,
     apellido:String,

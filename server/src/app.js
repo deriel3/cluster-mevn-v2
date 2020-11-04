@@ -16,13 +16,6 @@ app.use(morgan('combined'))
 app.use(bodyParser.json())
 app.use(cors())
 
-app.get('/posts', (req, res) => {
-    res.send(
-      [{
-        title: "Hello World!",
-        description: "Hi there! How are you?"
-      }]
-    )
-  })
+app.use('/api',require('./routes/index'));
 
-app.listen(process.env.PORT || 8081)
+app.listen(process.env.PORT || 3000)
