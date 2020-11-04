@@ -30,25 +30,10 @@ const routes = [
         component:() => import(/* webpackChunkName: "bienvenida" */ '../views/perfil/bienvenida.vue'),
       },
       {
-        path:'datos',
+        path:'cuenta',
         name:'perfil-datos',
         component:() => import(/* webpackChunkName: "datos" */ '../views/perfil/datos_personales.vue'),
-      },
-      {
-        path:'dispositivos',
-        name:'dispositivos-persona',
-        component:() => import(/* webpackChunkName: "dispositivo" */ '../views/perfil/dispositivos.vue'),
-      },
-      {
-        path:'lista-favoritas',
-        name:'favoritos-persona',
-        component:() => import(/* webpackChunkName: "empresas-favoritas" */ '../views/perfil/empresas-favoritas.vue'),
-      },
-      {
-        path:'mis-empresas',
-        name:'mis-empresas-persona',
-        component:() => import(/* webpackChunkName: "mi-empresa" */ '../views/perfil/mis-empresas.vue'),
-      },
+      }
     ]
   }
 ]

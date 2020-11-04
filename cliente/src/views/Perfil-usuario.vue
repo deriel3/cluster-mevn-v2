@@ -4,10 +4,7 @@
         style="position:fixed; z-index:1"
         v-model="tab">
             <v-tab :to="{name:'bienvenida-persona'}">Bienvenida</v-tab>
-            <v-tab :to="{name:'perfil-datos'}">Datos Personales</v-tab>
-            <v-tab :to="{name:'dispositivos-persona'}">Dispositivos</v-tab>
-            <v-tab :to="{name:'favoritos-persona'}">Favoritos</v-tab>
-            <v-tab :to="{name:'mis-empresas-persona'}">Mis empresas</v-tab>
+            <v-tab :to="{name:'perfil-datos'}">Mi Cuenta</v-tab>
         </v-tabs>
         <v-container>
             <v-row class="mt-16">

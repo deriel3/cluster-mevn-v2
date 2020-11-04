@@ -114,7 +114,7 @@ export default {
                         this.password = ''
                         this.$toast.error("Usuario o contraseña erroneos");
                     }
-                    this.is_loading=true
+                    this.is_loading=false
                 })
             }
         },

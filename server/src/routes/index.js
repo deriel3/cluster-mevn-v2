@@ -171,10 +171,14 @@ router.get('/mi-perfil/:id',middlewares.rutasProtegidas_get,async(req,res)=>{
     let data_envio={
         _id:req.params.id
     }
-    let datos=await usuario.findOne(data_envio).select('apellido correo_electronico genero nombre pais')
+    let mac=await macaddress.one()
+    let datos=await usuario.findOne(data_envio).select('apellido correo_electronico genero nombre pais sesiones_dispositivos')
+    let empresas=await empresa.find({"user_id":req.params.id}).select('ruc razon_social url_logo')
     res.json({
         cod:"200",
-        data:datos
+        data:datos,
+        mac_actual:mac,
+        empresa:empresas
     })
 });
 router.post('/actualizar_datos',middlewares.rutasProtegidas_post,async(req,res)=>{
@@ -241,12 +245,7 @@ router.post('/cambio_contrasena',middlewares.rutasProtegidas_post,async(req,res)
     }
     
 })
-router.get('/obt_dispositivos/:id',middlewares.rutasProtegidas_get,async(req,res)=>{
-    let mac=await macaddress.one()
-    let dispositivos= await usuario.findById(req.params.id).select('sesiones_dispositivos._id sesiones_dispositivos.name sesiones_dispositivos.nombre sesiones_dispositivos.fecha_ingreso')
-    if(dispositivos!=null) res.json({"cod":"200","data":dispositivos,"mac_actual":mac})
-    else res.json("cod:201");
-})
+
 router.post('/eliminar_dispositivo',middlewares.rutasProtegidas_post,async(req,res)=>{
     let dispositivo_eliminado=await usuario.findByIdAndUpdate(req.body.id,{$pull:{"sesiones_dispositivos":{_id:req.body.id_dispositivo}}})
     if(dispositivo_eliminado!=null)res.json({cod:"200"})

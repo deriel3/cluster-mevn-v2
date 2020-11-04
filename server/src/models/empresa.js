@@ -21,7 +21,6 @@ const empresa=new Schema({
         persona:String,
     }],
     locacion:[{
-        nombre:String,
         tipo_sede:String,
         direccion:String
     }],
