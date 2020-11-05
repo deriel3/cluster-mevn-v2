@@ -28,11 +28,11 @@
         </v-img>
         
         <v-card-text>
-        <div class="font-weight-bold ml-8 mb-2">
+        <div class="font-weight-bold mb-2">
             <v-tabs-items v-model="tab">
                 <v-tab-item>
                     <div>
-                        <h1 class="d-inline">Datos Personales</h1>
+                        <h1 class="d-inline ml-8">Datos Personales</h1>
                         <v-btn class="d-inline float-right"
                         icon
                         @click="editar=!editar">
@@ -57,20 +57,20 @@
                 </v-tab-item>
                 <v-tab-item>
                     <div>
-                        <h1 class="d-inline">Empresas Favoritas</h1>
+                        <h1 class="d-inline ml-8">Empresas Favoritas</h1>
                     </div>
                 </v-tab-item>
                 <v-tab-item>
                     <div>
-                        <h1 class="d-inline">Mis empresas</h1>
+                        <h1 class="d-inline ml-8">Mis empresas</h1>
                         <v-dialog
                         v-model="dialog_empresa"
                         max-width="700">
                             <template v-slot:activator="{on,attrs}">
-                                <v-btn class="d-inline float-right"
+                                <v-btn  class="d-inline float-right"
+                                :disabled="lista_empresas.length==6"
                                 fab
                                 small
-                                @click="anadir_empresa"
                                 v-bind="attrs"
                                 v-on="on"
                                 >
@@ -80,13 +80,14 @@
                             <registro></registro>
                         </v-dialog>
                     </div>
-                    <empresas v-if="lista_empresas.length>0"></empresas>
+                    <empresas v-if="lista_empresas.length>0" :lista_empresa="lista_empresas"></empresas>
                     <div v-else class="text-center my-8"><v-icon>mdi-information-outline</v-icon><p>No hay ninguna empresa registrada</p></div>
                 </v-tab-item>
                 <v-tab-item>
                     <div>
-                        <h1 class="d-inline">Configuracion de cuenta</h1>
+                        <h1 class="d-inline ml-8">Configuracion de cuenta</h1>
                     </div>
+                    <configuracion></configuracion>
                 </v-tab-item>
             </v-tabs-items>
             
@@ -99,6 +100,7 @@ import registro_empresa from '../../components/perfil-persona/datos-personales/r
 import formulario from '../../components/perfil-persona/datos-personales/formulario-datos'
 import tabla from '../../components/perfil-persona/datos-personales/dispositivos'
 import empresas from '../../components/perfil-persona/datos-personales/lista-empresas'
+import configuracion from '../../components/perfil-persona/datos-personales/cambio_contrasena'
 import axios from 'axios'
 import { EventBus } from '../../EventBus/EventBus'
 export default {
@@ -106,7 +108,8 @@ export default {
         formulario,
         tabla,
         empresas,
-        registro: registro_empresa
+        registro: registro_empresa,
+        configuracion
     },
     data () {
         return {
@@ -142,8 +145,20 @@ export default {
         this.usuario=this.$route.params.usuario
         this.url=this.lista_banner[Math.floor(Math.random()*3)+1].src
         this.obtener_data_usuario()
+        EventBus.$on("nueva_empresa",empresa => {
+            this.nueva_empresa(empresa)
+        })
     },
     methods:{
+        nueva_empresa(empresa)
+        {
+            let nueva_empresa = {
+                ruc: empresa.ruc,
+                razon_social: empresa.razon_social,
+                url_logo: empresa.url_logo
+            }
+            this.lista_empresas.push(nueva_empresa)
+        },
         loading () {
             this.loading = !this.loading
         },
@@ -177,11 +192,9 @@ export default {
             if (this.lista_empresas.length === 6)
             {
                 this.$toast.error("No se puede crear mas de 6 empresas en una cuenta gratis")
-                this.modal_empresa = false
-            }
-            else
-            {
-                
+                console.log(this.dialog_empresa)
+                this.dialog_empresa = false
+                console.log(this.dialog_empresa)
             }
         }
     }

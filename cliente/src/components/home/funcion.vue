@@ -8,7 +8,6 @@
         <br>  
         <v-carousel 
             class="mx-auto"
-            style="width:50%;"
         >
             <v-carousel-item >
                 <v-sheet
@@ -16,7 +15,7 @@
                     align="middle"
                     justify="middle"
                     fill-height fluid
-                    color="grey lighten-2"
+                    color="white"
                     height="100%"
                     tile
                 >
@@ -42,7 +41,7 @@
                     align="middle"
                     justify="middle"
                     fill-height fluid
-                    color="grey lighten-2"
+                    color="white"
                     height="100%"
                     tile
                 >
@@ -67,7 +66,7 @@
                     align="middle"
                     justify="middle"
                     fill-height fluid
-                    color="grey lighten-2"
+                    color="white"
                     height="100%"
                     tile
                 >
@@ -92,7 +91,7 @@
                     align="middle"
                     justify="middle"
                     fill-height fluid
-                    color="grey lighten-2"
+                    color="white"
                     height="100%"
                     tile
                 >
@@ -117,7 +116,7 @@
                     align="middle"
                     justify="middle"
                     fill-height fluid
-                    color="grey lighten-2"
+                    color="white"
                     height="100%"
                     tile
                 >

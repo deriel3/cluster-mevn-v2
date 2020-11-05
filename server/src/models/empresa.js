@@ -24,9 +24,7 @@ const empresa=new Schema({
         tipo_sede:String,
         direccion:String
     }],
-    categorias:[{
-        categoria:String
-    }],
+    categorias:[String],
     producto:[{
         tipo_producto:{
             default:"",

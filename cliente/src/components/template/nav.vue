@@ -57,7 +57,7 @@
       >
         <span>Comprador</span>
       </v-btn>
-      <v-btn
+      <v-btn class="mr-2 ml-2 hidden-sm-and-down"
         rounded
         text
         to="/buscar"
@@ -146,32 +146,23 @@
             v-model="group"
             active-class="deep-purple--text text--accent-4"
           >
-            <v-list-item>
-              <v-list-item-icon>
-                <v-icon>mdi-home</v-icon>
-              </v-list-item-icon>
-              <v-list-item-title>Home</v-list-item-title>
+            <v-list-item to="/">
+              <span>Inicio</span>
             </v-list-item>
 
-            <v-list-item>
-              <v-list-item-icon>
-                <v-icon>mdi-account</v-icon>
-              </v-list-item-icon>
-              <v-list-item-title>Account</v-list-item-title>
+            <v-list-item to="/#funciona">
+              <span>¿Como Funciona?</span>
             </v-list-item>
   
-            <v-list-item>
-              <v-list-item-icon>
-                <v-icon>mdi-account</v-icon>
-              </v-list-item-icon>
-              <v-list-item-title>Account</v-list-item-title>
+            <v-list-item to="vender">
+              <span>Proveedor</span>
             </v-list-item>
             
-            <v-list-item>
-              <v-list-item-icon>
-                <v-icon>mdi-account</v-icon>
-              </v-list-item-icon>
-              <v-list-item-title>Account</v-list-item-title>
+            <v-list-item to="comprar">
+              <span>Comprador</span>
+            </v-list-item>
+            <v-list-item to="buscar">
+              <v-icon>mdi-magnify</v-icon>
             </v-list-item>
           </v-list-item-group>
         </v-list>

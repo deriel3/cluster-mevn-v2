@@ -8,7 +8,7 @@ module.exports={
     storage:multer.diskStorage({
         destination: (req,file,cb)=>{
             const userID=req.body.id
-            const dir ='./src/public/empresas/'+userID
+            const dir ='../cliente/src/assets/empresas/'+userID
             fs.exists(dir,exist=>{
                 if(!exist) return fs.mkdir(dir,error=>cb(error,dir))
                 return cb(null,dir)

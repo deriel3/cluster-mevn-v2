@@ -35,6 +35,11 @@ const routes = [
         component:() => import(/* webpackChunkName: "datos" */ '../views/perfil/datos_personales.vue'),
       }
     ]
+  },
+  {
+    path: '/mi-perfil/:usuario/empresa/:ruc/configurar',
+    name:'configrar-empresa',
+    component:() => import(/* webpackChunkName: "configurar-empresa" */ '../views/perfil/configurar_empresa.vue'),
   }
 ]
 

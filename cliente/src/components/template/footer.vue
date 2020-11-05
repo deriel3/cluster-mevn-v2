@@ -5,6 +5,7 @@
         <v-col
         class="px-5"
         md="4"
+        sm="12"
         cols="12"
         >
             <h1 class="headline font-weight-bold mb-4 text-left">¿Quienes Somos?</h1>
@@ -13,7 +14,7 @@
             </v-responsive>
             <v-img
              class="mb-4"
-            width="100%"
+            max-width="300px"
             src="../../assets/Foto/FootClust.png">
             </v-img>
             <p class="base-body body-1 black--text text-left">
@@ -23,6 +24,7 @@
         <v-col
         class="px-5"
         cols="12"
+        sm="12"
         md="4"
         >
             <h1 class="headline font-weight-bold mb-4 text-left"> Nuestros Enlaces</h1>
@@ -32,7 +34,9 @@
             <v-row>
                 <v-col
                 class="px-3"
-                md="5">
+                sm="6"
+                cols="6"
+                md="6">
                     <v-btn
                     width="100%"
                     class="d-block"
@@ -58,10 +62,12 @@
                         <p>Comprador</p>
                     </v-btn>
                 </v-col>
-                <v-col md="2" class="text-center"><v-divider vertical></v-divider></v-col>
                 <v-col
                 class="px-3"
-                md="5">
+                
+                sm="6"
+                cols="6"
+                md="6">
                         <v-btn
                     width="100%"
                     class="d-block"
@@ -92,6 +98,7 @@
         <v-col
         class="px-5"
         cols="12"
+        sm="12"
         md="4"
         >
             <h1 class="headline font-weight-bold mb-4 text-left">Contactanos</h1>
@@ -100,7 +107,8 @@
             </v-responsive>
             <v-row>
                 <v-col
-                md="5">
+                md="6"
+                cols="6">
                     <div class="body-2 font-weight-bold mb-0 text-left">Telefono:</div>
                     <p class="base-body body-1 black--text text-left mb-2">
                         999 555 444
@@ -114,14 +122,12 @@
                         ejemplo@ejemplo.c
                     </p>
                 </v-col>
-                <v-col
-                md="2">
-                    <v-divider vertical></v-divider>
-                </v-col>
+                
                 <v-col
                 justify="center"
                 align="center"
-                md="5">
+                cols="6"
+                md="6">
                     <p class="base-body body-1 black--text text-center mb-2">Reciba nuevas noticias</p>
                     <v-btn
                         class="green"

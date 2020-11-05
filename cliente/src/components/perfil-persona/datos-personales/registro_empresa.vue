@@ -32,6 +32,7 @@
                             required
                             @input="$v.ruc.$touch()"
                             @blur="$v.ruc.$touch()"
+                            @focusout="verificar_ruc"
                             ></v-text-field>
                         </v-col>
                         <v-col
@@ -64,6 +65,57 @@
                         accept="image/x-png"
                         label="Logo de la empresa (PNG)"
                     ></v-file-input>
+                    <h3 class="black--text">Categoria</h3>
+                    <v-row>
+                        <v-col
+                        md="3">
+                            <v-checkbox
+                            class="d-inline"
+                            v-model="categoria"
+                            :error-messages="categoriaErrors"
+                            @input="$v.categoria.$touch()"
+                            @blur="$v.categoria.$touch()"
+                            label="Calzado"
+                            value="Calzado"
+                            ></v-checkbox>
+                        </v-col>
+                        <v-col
+                        md="3">
+                            <v-checkbox
+                            class="d-inline"
+                            v-model="categoria"
+                            :error-messages="categoriaErrors"
+                            @input="$v.categoria.$touch()"
+                            @blur="$v.categoria.$touch()"
+                            label="Materia Prima"
+                            value="Materia Prima"
+                            ></v-checkbox>
+                        </v-col>
+                        <v-col
+                        md="3">
+                            <v-checkbox
+                            class="d-inline"
+                            v-model="categoria"
+                            :error-messages="categoriaErrors"
+                            @input="$v.categoria.$touch()"
+                            @blur="$v.categoria.$touch()"
+                            label="Insumo"
+                            value="Insumo"
+                            ></v-checkbox>
+                        </v-col>
+                        <v-col
+                        md="3">
+                            <v-checkbox
+                            class="d-inline"
+                            v-model="categoria"
+                            :error-messages="categoriaErrors"
+                            @input="$v.categoria.$touch()"
+                            @blur="$v.categoria.$touch()"
+                            label="Suministro"
+                            value="Suministro"
+                            ></v-checkbox>
+                        </v-col>
+                    </v-row>
                     <v-btn
                     color="primary"
                     class="mr-4 black--text mt-4"
@@ -140,11 +192,18 @@
                     </v-row>
                     <p class="caption">* En la seccion de configuracion de empresa podra añadir mas locaciones y contactos.</p>
                     <v-btn
-                    color="danger"
-                    class="mr-4 black--text mt-4"
+                    color="error"
+                    class="mr-4 white--text mt-4"
                     @click="paso=paso-1"
                     >
                         Atras
+                    </v-btn>
+                    <v-btn
+                    color="primary"
+                    class="mr-4 black--text mt-4"
+                    @click="registrar_empresa"
+                    >
+                        Registrar
                     </v-btn>
                 </v-stepper-content>
                 <v-stepper-content step="3">
@@ -158,6 +217,7 @@
 import { validationMixin } from 'vuelidate'
 import { required, maxLength, email, sameAs, minLength } from 'vuelidate/lib/validators'
 import axios from 'axios'
+import { EventBus } from '../../../EventBus/EventBus'
 export default {
     mixins: [validationMixin],
 
@@ -170,7 +230,8 @@ export default {
       direccion: { required , maxLength: maxLength(500) },
       tipo_dispositivo: {required},
       contacto: { required },
-      persona: { required , maxLength: maxLength(250)}
+      persona: { required , maxLength: maxLength(250)},
+      categoria: {required}
     },
     data () {
         return{
@@ -186,10 +247,16 @@ export default {
             contacto: '',
             persona: '',
             sede:["Planta de produccion", "Tienda propia", "Tienda externa", "Otro"],
-            medio_contacto:["Correo electronico", "Telefono", "Celular", "Fax", "Pagina web", "Otro"]
+            medio_contacto:["Correo electronico", "Telefono", "Celular", "Fax", "Pagina web", "Otro"],
+            categoria: []
         }
     },
     computed: {
+        categoriaErrors(){
+            const errors = []
+            !this.$v.categoria.required && errors.push("Seleccione por lo menos una opcion")
+            return errors
+        },
         direccionErrors () {
             const errors = []
             if (!this.$v.direccion.$dirty) return errors
@@ -206,28 +273,24 @@ export default {
         },
         tiposedeErrors(){
             const errors = []
-            console.log(this.$v.tipo_sede)
             if(!this.$v.tipo_sede.$dirty) return errors
             !this.$v.tipo_sede.required && errors.push('El campo obligatorio.')
             return errors
         },
         tipodispositivoErrors(){
             const errors = []
-            console.log(this.$v.tipo_dispositivo)
             if(!this.$v.tipo_dispositivo.$dirty) return errors
             !this.$v.tipo_dispositivo.required && errors.push('El campo obligatorio.')
             return errors
         },
         contactoErrors(){
             const errors = []
-            console.log(this.$v.contacto)
             if(!this.$v.contacto.$dirty) return errors
             !this.$v.contacto.required && errors.push('El campo obligatorio.')
             return errors
         },
         urlErrors(){
             const errors = []
-            console.log(this.$v.file)
             if(!this.$v.file.$dirty) return errors
             !this.$v.file.required && errors.push('El campo obligatorio.')
             return errors
@@ -256,22 +319,138 @@ export default {
         },
     },
     methods: {
-        siguiente()
-        {
-            //this.validar_paso1()
+        verificar_ruc () {
+            if(this.ruc.length==11)
+            {
+                let token = this.$store.state.token
+                let id = this.$store.state.user.id
+
+                let ruc= this.ruc
+                let option = {
+                    url: process.env.VUE_APP_URL_SERVER+"/api/ver_empresa",
+                    method: 'POST',
+                    headers:{
+                        'access-token':token,
+                        'Accept':'application/json',
+                        'Content-type':'application/json'
+                    },
+                    data: {
+                        ruc: ruc,
+                        id: id
+                    }
+                }
+                axios(option)
+                .then(res => {
+                    let data = res.data
+                    if(data.cod=="500")
+                    {
+                        this.$toast.error("RUC ya registrado");
+                        this.ruc=""
+                    }
+                    if(data.cod=="200")
+                    {
+                        this.$toast.success("RUC correcto");
+                    }
+                    if(data.cod=="403")
+                    {
+                        EventBus.$emit('force_logout',1);
+                    }
+                })
+            }
+        },
+        siguiente() {
+            this.validar_paso1()
             if( !this.$v.ruc.$error &&
             !this.$v.razon_social.$error && 
             !this.$v.nombre_comercial.$error &&
-            !this.$v.file.$error)
+            !this.$v.file.$error &&
+            !this.$v.categoria.$error)
             {
                 this.paso = 2
             }
         },
         validar_paso1(){
+            this.$v.categoria.$touch()
             this.$v.ruc.$touch()
             this.$v.razon_social.$touch()
             this.$v.nombre_comercial.$touch()
             this.$v.file.$touch()  
+        },
+        validar_paso2() {
+            this.$v.tipo_sede.$touch()
+            this.$v.direccion.$touch()
+            this.$v.tipo_dispositivo.$touch()
+            this.$v.contacto.$touch()
+            this.$v.persona.$touch()
+        },
+        reiniciar(){
+            this.ruc = '',
+            this.razon_social = '',
+            this.nombre_comercial = '',
+            this.file = {},
+            this.url = '',
+            this.tipo_sede = '',
+            this.direccion = '',
+            this.tipo_dispositivo = '',
+            this.contacto = '',
+            this.persona = '',
+            this.categorias = [],
+            this.paso = 3
+        },
+        registrar_empresa() {
+            this.validar_paso2()
+            if( !this.$v.tipo_sede.$error &&
+            !this.$v.direccion.$error && 
+            !this.$v.tipo_dispositivo.$error &&
+            !this.$v.contacto.$error &&
+            !this.$v.persona.$error )
+            {
+                let id = this.$store.state.user.id
+                let token = this.$store.state.token
+                let parameter = new FormData();
+                parameter.append('id',id)
+                parameter.append('ruc',this.ruc)
+                parameter.append('razon_social',this.razon_social)
+                parameter.append('nombre_comercial',this.nombre_comercial)
+                parameter.append('categoria',this.categoria)
+                parameter.append('accion',1)
+                parameter.append('image', this.file)
+                parameter.append('tipo_sede', this.tipo_sede)
+                parameter.append('direccion', this.direccion)
+                parameter.append('tipo_dispositivo', this.tipo_dispositivo)
+                parameter.append('contacto', this.contacto)
+                parameter.append('persona', this.persona)
+                const option = {
+                    url: process.env.VUE_APP_URL_SERVER+"/api/nueva-empresa/"+id,
+                    method: 'POST',
+                    headers: {
+                        'access-token':token,
+                        'content-type': 'multipart/form-data'
+                    },
+                    data:parameter
+                }
+                axios(option)
+                .then(res => {
+                    let data = res.data
+                    switch(data.cod)
+                    {
+                        case "200":this.$toast.success('Empresa creada')
+                        let empresa_creada = {
+                            ruc: this.ruc,
+                            url_logo: this.ruc+".png",
+                            razon_social: this.razon_social
+                        }
+                        EventBus.$emit('nueva_empresa',empresa_creada);
+                        break;
+                        case "201":this.$toast.error("Error al registrar")
+                        break
+                        case "202":this.$toast.error("Solo se pueden crear 6 empresas por usuario")
+                        break;
+                        case "403":EventBus.$emit('force_logout',1);
+                    }
+                    this.reiniciar()
+                })
+            }
         }
     }
 }

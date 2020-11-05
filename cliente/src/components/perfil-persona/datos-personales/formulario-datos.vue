@@ -1,6 +1,6 @@
 <template>
-    <div class="mx-15">
-        <form class="my-5 px-15">
+    <div class="mx-auto" style="width:80%">
+        <form class="my-5">
                 <v-row>
                     <v-col
                     md="6"
@@ -151,37 +151,40 @@ export default {
         guardar_cambios () {
             this.$emit("loading")
             this.$v.$touch()
-            let id = this.$store.state.user.id
-            let token = this.$store.state.token
-            const option ={
-                url: process.env.VUE_APP_URL_SERVER+"/api/actualizar_datos",
-                method: 'POST',
-                headers: {
-                    'access-token':token,
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json;charset=UTF-8'
-                },
-                data: {
-                    id: id,
-                    persona: {
-                        nombre: this.nombre,
-                        apellido: this.apellido,
-                        correo: this.email,
-                        genero: this.genero,
-                        pais: this.pais
+            if(!this.$v.$error)
+            {
+                let id = this.$store.state.user.id
+                let token = this.$store.state.token
+                const option ={
+                    url: process.env.VUE_APP_URL_SERVER+"/api/actualizar_datos",
+                    method: 'POST',
+                    headers: {
+                        'access-token':token,
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json;charset=UTF-8'
+                    },
+                    data: {
+                        id: id,
+                        persona: {
+                            nombre: this.nombre,
+                            apellido: this.apellido,
+                            correo: this.email,
+                            genero: this.genero,
+                            pais: this.pais
+                        }
                     }
                 }
+                axios(option)
+                .then(res => {
+                    switch (res.data.cod)
+                    {
+                        case "200": this.$toast.success("Datos actualizados")
+                        break
+                        case "403": EventBus.$emit('force_logout')
+                    }
+                    this.$emit("loading")
+                })
             }
-            axios(option)
-            .then(res => {
-                switch (res.data.cod)
-                {
-                    case "200": this.$toast.success("Datos actualizados")
-                    break
-                    case "403": EventBus.$emit('force_logout')
-                }
-                this.$emit("loading")
-            })
         },
         obtener_pais () {
             const option={

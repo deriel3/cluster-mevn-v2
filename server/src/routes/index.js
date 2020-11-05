@@ -203,45 +203,30 @@ router.post('/cambio_contrasena',middlewares.rutasProtegidas_post,async(req,res)
     let cont_actual=await usuario.findById(req.body.id).select('contraseña')
     if(cont_actual!=null)
     {
-        let es_contraseña=await bcrypt.compare(req.body.contraseña.antigua, cont_actual.contraseña);
+        let es_contraseña=await bcrypt.compare(req.body.antigua, cont_actual.contraseña);
         if(es_contraseña)
         {
-            let contraseña_nueva= await bcrypt.hash(req.body.contraseña.nueva_contraseña,10);
+            let contraseña_nueva= await bcrypt.hash(req.body.nueva_contraseña,10);
             let es_cambio=await usuario.findByIdAndUpdate(req.body.id,{
                 contraseña:contraseña_nueva
             })
             if(es_cambio!=null)
             {
-                if(req.body.contraseña.cerrar_sesion)
-                {
-                    const usuario_actualizado=await usuario.findByIdAndUpdate(req.body.id,{$set:{'sesiones_dispositivos':[]}})
-                    if(usuario_actualizado!=null)
-                    {
-                        res.json({cod:"202"})
-                    }
-                    else
-                    {
-                        res.json({cod:"201"})
-                    }
-                }
-                else
-                {
-                    res.json({cod:"200"})
-                }
+                res.json({cod:"200"})
             }
             else
             {
-                res.json({cod:"No se pudo actualizar"})
+                res.json({cod:"201"})
             }
         }
         else
         {
-            res.json({cod:"La contraseña actual no coincide"})
+            res.json({cod:"202"})
         }
     }
     else
     {
-        res.json({cod:"Usuario no existe"})
+        res.json({cod:"203"})
     }
     
 })
@@ -259,16 +244,28 @@ router.post('/nueva-empresa/:id',[middlewares.rutasProtegidas_get,upload.single(
     let cantidad=await empresa.find({'user_id':req.params.id}).select('ruc');
     if(cantidad.length<=5)
     {
-        let url='/empresas/'+req.body.id+"/"+req.body.ruc+".png"
+        let url=req.body.ruc+".png"
         const nueva_empresa=new empresa({ruc:req.body.ruc,
             razon_social:req.body.razon_social,
             nombre_comercial:req.body.nombre_comercial,
-            url_logo:url,
-            user_id:req.body.id
+            url_logo: url,
+            user_id: req.body.id,
+            categorias:[req.body.categoria],
+            forma_contacto:[{
+                tipo_dispositivo: req.body.tipo_dispositivo,
+                contacto: req.body.contacto,
+                persona: req.body.persona
+            }],
+            locacion: [
+                {
+                    tipo_sede: req.body.tipo_sede,
+                    direccion: req.body.direccion
+                }
+            ]  
             })
         let data = await nueva_empresa.save()
-        if(data!=null)res.json({cod:"200"})
-        res.json({cod:"201"})
+        if(data!=null){res.json({cod:"200"})}
+        else {res.json({cod:"201"})}
     }
     else
     {
@@ -506,7 +503,6 @@ router.get('/obtener_producto/:id/:pagina',async(req,res)=>{
             {$match:{"producto.estado":1}},
             {$project:{array:"$producto",nombre:"$razon_social"}}
         ]).skip(req.params.pagina>0?((req.params.pagina-1)*5):0).limit(5)
-        console.log(producto)
     }
     else
     {
