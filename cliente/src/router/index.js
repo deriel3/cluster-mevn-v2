@@ -40,6 +40,11 @@ const routes = [
     path: '/mi-perfil/:usuario/empresa/:ruc/configurar',
     name:'configrar-empresa',
     component:() => import(/* webpackChunkName: "configurar-empresa" */ '../views/perfil/configurar_empresa.vue'),
+  },
+  {
+    path: '/mi-perfil/:usuario/empresa/:ruc/configurar/:codigo',
+    name: 'configurar-producto',
+    component:() => import(/* webpackChunkName: "configurar-producto" */ '../views/perfil/configurar_producto.vue'),
   }
 ]
 

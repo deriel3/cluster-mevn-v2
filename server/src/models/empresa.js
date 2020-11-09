@@ -4,7 +4,10 @@ const {Schema}= mongoose;
 const empresa=new Schema({
     ruc:String,
     razon_social:String,
-    descripcion:String,
+    descripcion:{
+        type:String,
+        default:''
+    },
     estado:{
         type:Number,
         default:0
@@ -15,6 +18,10 @@ const empresa=new Schema({
     },
     nombre_comercial:String,
     url_logo:String,
+    url_portada:{
+        type:String,
+        default:"default"
+    },
     forma_contacto:[{
         tipo_dispositivo:String,
         contacto:String,

@@ -207,7 +207,15 @@
                     </v-btn>
                 </v-stepper-content>
                 <v-stepper-content step="3">
-                    
+                    <div class="display-1" align="center">
+                        <h3 class="my-2">La empresa se registro satisfactoriamente.</h3>
+                        <v-icon size="60px" color="green">mdi-check-circle</v-icon>
+                        <p class="base-body body-1 mt-10">Ingrese a la configuracion de la empresa creada y activela para que pueda ser vista por todos los usuarios.</p>
+                        <v-btn
+                        color="" class="black--text" @click="paso=1">
+                            Crear nueva empresa
+                        </v-btn>
+                    </div>
                 </v-stepper-content>
             </v-stepper-items>
         </v-stepper>
@@ -248,7 +256,8 @@ export default {
             persona: '',
             sede:["Planta de produccion", "Tienda propia", "Tienda externa", "Otro"],
             medio_contacto:["Correo electronico", "Telefono", "Celular", "Fax", "Pagina web", "Otro"],
-            categoria: []
+            categoria: [],
+            ruc_creado: ''
         }
     },
     computed: {
@@ -319,6 +328,9 @@ export default {
         },
     },
     methods: {
+        Configurar_empresa_creada(){
+            
+        },
         verificar_ruc () {
             if(this.ruc.length==11)
             {
@@ -394,7 +406,7 @@ export default {
             this.tipo_dispositivo = '',
             this.contacto = '',
             this.persona = '',
-            this.categorias = [],
+            this.categorias = [""],
             this.paso = 3
         },
         registrar_empresa() {
@@ -441,6 +453,7 @@ export default {
                             razon_social: this.razon_social
                         }
                         EventBus.$emit('nueva_empresa',empresa_creada);
+                        this.ruc_creado = this.ruc
                         break;
                         case "201":this.$toast.error("Error al registrar")
                         break

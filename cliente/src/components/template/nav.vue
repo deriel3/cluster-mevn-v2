@@ -207,7 +207,7 @@ export default {
     },
     validar_login () {
       let usuario=this.$store.state.user;
-      if(typeof usuario === 'object' && usuario !== null)
+      if(typeof usuario === 'object' && usuario !== null && usuario.usuario !== '')
       {
         this.is_loged=true
         this.usuario_loged=usuario.usuario

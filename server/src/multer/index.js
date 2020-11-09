@@ -25,7 +25,7 @@ module.exports={
             const userID=req.body.id
             const productoCOD=req.body.codigo
             const ruc=req.body.ruc
-            const dir ='./src/public/empresas/'+userID+"/"+ruc+"-"+productoCOD
+            const dir ='../cliente/src/assets/empresas/'+userID+"/"+ruc+"-"+productoCOD
             fs.exists(dir,exist=>{
                 if(!exist) return fs.mkdir(dir,error=>cb(error,dir))
                 return cb(null,dir)
@@ -33,7 +33,8 @@ module.exports={
         },
         filename: (req,file,db)=>{
             const productoCOD=req.body.codigo
-            db(null,"p-"+productoCOD+path.extname(file.originalname))
+            const extension = path.extname(file.originalname)
+            db(null,"p-"+productoCOD+extension.toLowerCase())
             
         }
     }),
@@ -55,6 +56,22 @@ module.exports={
             
         }
     }),
+    storage4:multer.diskStorage({
+        destination: (req,file,cb)=>{
+            const userID=req.body.id
+            const dir ='../cliente/src/assets/empresas/'+userID
+            fs.exists(dir,exist=>{
+                if(!exist) return fs.mkdir(dir,error=>cb(error,dir))
+                return cb(null,dir)
+            })
+        },
+        filename: (req,file,db)=>{
+            const empresaID=req.body.ruc
+            db(null,"portada-"+empresaID+path.extname(file.originalname))
+            
+        }
+    }),
+
     filefilter2:async (req,file,cb)=>{
         if(file.mimetype =='image/png'){
             cb(null,true);

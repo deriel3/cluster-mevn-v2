@@ -165,6 +165,7 @@ export default {
         obtener_data_usuario () {
             let token = this.$store.state.token
             let id = this.$store.state.user.id
+
             const option={
                 url: process.env.VUE_APP_URL_SERVER+"/api/mi-perfil/"+id,
                 method: 'GET',
@@ -176,6 +177,7 @@ export default {
             }
             axios(option)
             .then(res => {
+                console.log(res.data)
                 switch (res.data.cod)
                 {
                     case "200": this.datos_usuario = res.data.data
