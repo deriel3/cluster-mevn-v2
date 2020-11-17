@@ -2,6 +2,7 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const cors = require('cors')
 const morgan = require('morgan')
+const path=require('path')
 var mongoose = require('mongoose');
 
 mongoose.connect('mongodb://localhost:27017/cluster-mevn');
@@ -12,6 +13,7 @@ db.once("open", function(callback){
 });
 
 const app = express()
+app.use('/assets',express.static(path.join(__dirname,'assets')))
 app.use(morgan('combined'))
 app.use(bodyParser.json())
 app.use(cors())

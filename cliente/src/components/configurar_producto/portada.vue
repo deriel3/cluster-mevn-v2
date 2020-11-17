@@ -2,12 +2,12 @@
     <v-container class="d-flex">
         <div class="px-5 py-5" align="center" style="width:100%">
             <v-card justify="space-around" width="500" class="mx-5">
-                <v-card-title class="primary"><h1 class="py-3">Logo actual</h1></v-card-title>
+                <v-card-title class="primary"><h1 class="py-3">Imagen de portada actual</h1></v-card-title>
                 <v-img
                 max-width="350px"
                 :src="imagen()">
                 </v-img>
-                <v-card-title class="primary"><h1 class="py-3">Nuevo Logo</h1></v-card-title>
+                <v-card-title class="primary"><h1 class="py-3">Nueva imagen de portada</h1></v-card-title>
                 <v-file-input
                 v-model="file"
                 :error-messages="urlErrors"
@@ -15,7 +15,7 @@
                 @blur="$v.file.$touch()"
                 @change="vista_previa_cambio"
                 accept="image/x-png"
-                label="Nuevo logo (PNG)"
+                label="Nueva Portada (PNG)"
                 ></v-file-input>
                 <v-img
                 v-if="vista"
@@ -44,14 +44,11 @@ export default {
     validations: {
       file: { required }
     },
-    props:{
-        url_logo: ''
+    props: {
+        imagen_portada: '',
+        id: ''
     },
     methods: {
-        reiniciar () {
-            this.file = ''
-            this.vista = false
-        },
         guardar_logo () {
             this.$v.file.$touch()
             if (!this.$v.file.$error) { 
@@ -59,15 +56,18 @@ export default {
                 let id = this.$store.state.user.id
                 let ruc = this.$route.params.ruc
                 let token = this.$store.state.token
+                let codigo = this.$route.params.codigo
                 let parameter = new FormData();
                 parameter.append('id', id)
+                parameter.append('codigo_producto', this.id)
                 parameter.append('ruc',ruc)
                 parameter.append('accion',2)
-                parameter.append('segundo',segundos)
-                parameter.append('url_anterior',this.url_logo)
+                parameter.append('codigo',codigo)
+                parameter.append('segundo', segundos)
+                parameter.append('url_anterior',this.imagen_portada)
                 parameter.append('image', this.file)
                 let option = {
-                    url: process.env.VUE_APP_URL_SERVER+"/api/act_logo/"+id,
+                    url: process.env.VUE_APP_URL_SERVER+"/api/act_prodportada/"+id,
                     method: 'POST',
                     headers: {
                         'access-token':token,
@@ -80,10 +80,11 @@ export default {
                     let data = res.data
                     switch (data.cod)
                     {
-                        case "200": this.$toast.success("Logo actualizado")
-                        let nueva_url = segundos+"-"+ruc+".png"
-                        this.$emit("cambio_logo",nueva_url)
-                        this.reiniciar()
+                        case "200": this.$toast.success("Imagen de portada actualizada")
+                        let nueva_url = segundos+"-p-"+codigo+".png"
+                        this.vista = false
+                        this.file = {}
+                        this.$emit("cambio_portada",nueva_url)
                         break
                         case "403": EventBus.$emit("force_logout")
                     }
@@ -93,7 +94,8 @@ export default {
         imagen () {
             let id = this.$store.state.user.id
             let ruc = this.$route.params.ruc
-            return process.env.VUE_APP_URL_SERVER+"/assets/empresas/"+id+"/"+this.url_logo
+            let codigo = this.$route.params.codigo
+            return process.env.VUE_APP_URL_SERVER+"/assets/empresas/"+id+"/"+ruc+"-"+codigo.toLowerCase()+"/"+this.imagen_portada.toLowerCase()
         },
         vista_previa_cambio (e) {
             const file = e;

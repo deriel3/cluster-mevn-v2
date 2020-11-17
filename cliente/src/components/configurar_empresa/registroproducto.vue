@@ -224,6 +224,7 @@ export default {
             !this.$v.categoria.$error &&
             !this.$v.imagen_portada.$error)
             {
+                let segundos = new Date().getTime()
                 let id = this.$store.state.user.id
                 let token = this.$store.state.token
                 let ruc = this.$route.params.ruc
@@ -235,6 +236,7 @@ export default {
                 parameter.append('descripcion',this.descripcion)
                 parameter.append('categoria',this.categoria)
                 parameter.append('ruc', ruc)
+                parameter.append('segundo',segundos)
                 parameter.append('image', this.imagen_portada)
                 const option = {
                     url: process.env.VUE_APP_URL_SERVER+"/api/nuevo_producto/"+id,
@@ -254,7 +256,7 @@ export default {
                         let producto = {
                             nombre: this.nombre,
                             codigo: this.codigo,
-                            imagen_portada: "p-"+this.codigo+".png",
+                            imagen_portada: segundos+"-p-"+this.codigo+".png",
                             estado: 0
                         }
                         this.$emit("agregar-producto",producto)

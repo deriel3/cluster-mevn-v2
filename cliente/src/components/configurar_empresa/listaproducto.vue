@@ -54,8 +54,7 @@ export default {
         {
             let id = this.$store.state.user.id
             let ruc = this.$route.params.ruc
-            let imagen = require("../../assets/empresas/"+id+"/"+ruc+"-"+this.productos[ind].codigo+"/"+this.productos[ind].imagen_portada)
-            return imagen
+            return process.env.VUE_APP_URL_SERVER+"/assets/empresas/"+id+"/"+ruc+"-"+this.productos[ind].codigo.toLowerCase()+"/"+this.productos[ind].imagen_portada.toLowerCase()
         }
     },
     filters: {

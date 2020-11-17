@@ -57,8 +57,7 @@ export default {
         getImage(ind)
         {
             let id = this.$store.state.user.id
-            let imagen = require("../../../assets/empresas/"+id+"/"+this.lista_empresa[ind].url_logo)
-            return imagen
+            return process.env.VUE_APP_URL_SERVER+"/assets/empresas/"+id+"/"+this.lista_empresa[ind].url_logo
         }
     },
     filters: {

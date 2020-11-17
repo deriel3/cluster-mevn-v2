@@ -37,6 +37,7 @@
                             :error-messages="categoriaErrors"
                             @input="$v.data_categoria.$touch()"
                             @blur="$v.data_categoria.$touch()"
+                            @change="actualizar_select"
                             label="Calzado"
                             value="Calzado"
                             ></v-checkbox>
@@ -49,6 +50,7 @@
                             :error-messages="categoriaErrors"
                             @input="$v.data_categoria.$touch()"
                             @blur="$v.data_categoria.$touch()"
+                            @change="actualizar_select"
                             label="Materia Prima"
                             value="Materia Prima"
                             ></v-checkbox>
@@ -61,6 +63,7 @@
                             :error-messages="categoriaErrors"
                             @input="$v.data_categoria.$touch()"
                             @blur="$v.data_categoria.$touch()"
+                            @change="actualizar_select"
                             label="Insumo"
                             value="Insumo"
                             ></v-checkbox>
@@ -73,6 +76,7 @@
                             :error-messages="categoriaErrors"
                             @input="$v.data_categoria.$touch()"
                             @blur="$v.data_categoria.$touch()"
+                            @change="actualizar_select"
                             label="Suministro"
                             value="Suministro"
                             ></v-checkbox>
@@ -88,17 +92,21 @@
                             :items="items_tipoproducto"
                             label="Tipo de producto"
                             required
+                            :error-messages="tipo_productoErrors"
+                            @input="$v.data_tipo_producto.$touch()"
+                            @blur="$v.data_tipo_producto.$touch()"
                             ></v-select>
                         </v-col>
                         <v-col
                         md="6" 
                         sm="12" 
                         cols="12">
-                            <v-select
+                            <v-select v-if="!disabled_tipocalzado"
                             v-model="data_tipo_calzado"
                             :items="items_tipocalzado"
                             label="Familia del producto"
                             required
+                            :error-messages="tipo_calzadoErrors"
                             ></v-select>
                         </v-col>
                     </v-row>
@@ -108,10 +116,12 @@
                         sm="12" 
                         cols="12">
                             <v-select
+                            v-if="!disabled_genero"
                             v-model="data_genero"
-                            :items="items_tipoproducto"
+                            :items="items_genero"
                             label="Genero"
                             required
+                            :error-messages="generoErrors"
                             ></v-select>
                         </v-col>
                         <v-col
@@ -119,15 +129,17 @@
                         sm="12" 
                         cols="12">
                             <v-select
+                            v-if="!disabled_material"
                             v-model="data_material"
-                            :items="items_tipocalzado"
+                            :items="items_material"
                             label="Material"
                             required
+                            :error-messages="materialErrors"
                             ></v-select>
                         </v-col>
                     </v-row>
                     <v-btn
-                    color="primary" class="black--text" >
+                    color="primary" class="black--text" @click="actualizar_datos" >
                         Guardar Cambio
                     </v-btn>
                 </v-card-text>
@@ -143,6 +155,7 @@ import { EventBus } from '../../EventBus/EventBus'
 import dataJson from '../../../../server/src/models/archivos/lineas.json'
 export default {
     props: {
+        producto_id: '',
         nombre: '',
         descripcion: '',
         marca: '',
@@ -150,7 +163,7 @@ export default {
         tipo_producto: '',
         tipo_calzado: '',
         material: '',
-        genero: '',    
+        genero: ''    
     },
     mixins: [validationMixin],
 
@@ -167,18 +180,25 @@ export default {
     data () {
         return {
             data_nombre: this.nombre,
-            data_descripcion: this.data_descripcion,
-            data_marca: this.data_marca,
-            data_categoria: this.data_categoria,
-            data_tipo_producto: this.data_tipo_producto,
-            data_tipo_calzado: this.data_tipo_calzado,
-            data_material: this.data_material,
-            data_genero: this.data_genero,
+            data_descripcion: this.descripcion,
+            data_marca: this.marca,
+            data_categoria: this.categoria,
+            data_tipo_producto: this.tipo_producto,
+            data_tipo_calzado: this.tipo_calzado,
+            data_material: this.material,
+            data_genero: this.genero,
+            items_tipocalzado: [],
             items_tipoproducto: [],
-            items_tipocalzado: []
+            items_genero: [],
+            items_material: [],
+            disabled_tipocalzado: false,
+            disabled_genero: false,
+            disabled_material: false
         }
     },
-    
+    created () {
+        this.cargar_datos()
+    },
     computed: {
         nombreErrors () {
             const errors = []
@@ -223,11 +243,157 @@ export default {
         },
         generoErrors(){
             const errors = []
-            !this.$v.data_genero.required && errors.push("Seleccione una opcion")
+            if (!this.$v.data_genero.$dirty) return errors
+            !this.$v.data_genero.required && errors.push('Seleccione una opcion.')
             return errors
         }
     },
     methods: {
+        cargar_datos () {
+            switch(this.data_categoria)
+            {
+                case 'Calzado':
+                this.items_tipoproducto = dataJson[0].calzado[0].linea_calzado
+                this.items_tipocalzado = dataJson[0].calzado[0].tipo_calzado
+                this.items_genero = ["Hombre", "Mujer", "Unisex"]
+                this.items_material = ["Cuero", "Sintetico", "Textil", "Otro"]
+                this.disabled_tipocalzado = false
+                this.disabled_genero = false
+                this.disabled_material = false
+                break;
+                case 'Materia Prima':
+                this.items_tipoproducto = dataJson[0].materia_prima[0].acabado_cuero
+                this.items_tipocalzado = dataJson[0].materia_prima[0].tipo_cuero
+                this.items_material = ["Cuero", "Sintetico", "Textil", "Otro"]
+                this.disabled_tipocalzado = false
+                this.disabled_material = false
+                this.disabled_genero = true
+                break;
+                case 'Insumo':
+                this.items_tipoproducto = dataJson[0].insumo[0].tipo_insumo
+                this.items_material = ["Cuero", "Sintetico", "Textil", "Otro"]
+                this.disabled_material = false
+                this.disabled_genero = true
+                this.disabled_tipocalzado = true
+                
+                break;
+                case 'Suministro':
+                this.items_tipoproducto = dataJson[0].suministro[0].tipo_suministro
+                this.disabled_tipocalzado = true
+                this.disabled_genero = true
+                this.disabled_material = true
+                break
+            }
+        },
+        actualizar_select () {
+            switch(this.data_categoria)
+            {
+                case 'Calzado':
+                this.items_tipoproducto = dataJson[0].calzado[0].linea_calzado
+                this.items_tipocalzado = dataJson[0].calzado[0].tipo_calzado
+                this.items_genero = ["Hombre", "Mujer", "Unisex"]
+                this.items_material = ["Cuero", "Sintetico", "Textil", "Otro"]
+                this.disabled_tipocalzado = false
+                this.disabled_genero = false
+                this.disabled_material = false
+                this.data_tipo_producto = ""
+                this.data_tipo_calzado = ""
+                this.data_genero = ""
+                this.data_material = ""
+                break;
+                case 'Materia Prima':
+                this.items_tipoproducto = dataJson[0].materia_prima[0].acabado_cuero
+                this.items_tipocalzado = dataJson[0].materia_prima[0].tipo_cuero
+                this.items_material = ["Cuero", "Sintetico", "Textil", "Otro"]
+                this.disabled_tipocalzado = false
+                this.disabled_material = false
+                this.disabled_genero = true
+                this.data_tipo_producto = ""
+                this.data_tipo_calzado = ""
+                this.data_genero = "default"
+                this.data_material = ""
+                break;
+                case 'Insumo':
+                this.items_tipoproducto = dataJson[0].insumo[0].tipo_insumo
+                this.items_material = ["Cuero", "Sintetico", "Textil", "Otro"]
+                this.disabled_material = false
+                this.disabled_genero = true
+                this.disabled_tipocalzado = true
+                this.data_tipo_producto = ""
+                this.data_tipo_calzado = "default"
+                this.data_genero = "default"
+                this.data_material = ""
+                break;
+                case 'Suministro':
+                this.items_tipoproducto = dataJson[0].suministro[0].tipo_suministro
+                this.disabled_tipocalzado = true
+                this.disabled_genero = true
+                this.disabled_material = true
+                this.data_tipo_producto = ""
+                this.data_tipo_calzado = "default"
+                this.data_genero = "default"
+                this.data_material = "default"
+                break
+            }
+        },
+        validar_formulario () {
+            this.$v.data_marca.$touch()
+            this.$v.data_nombre.$touch()
+            this.$v.data_descripcion.$touch()
+            this.$v.data_categoria.$touch()
+            this.$v.data_tipo_producto.$touch()
+            this.$v.data_tipo_calzado.$touch()
+            this.$v.data_genero.$touch()
+            this.$v.data_material.$touch()
+            return (!this.$v.data_marca.$error &&
+            !this.$v.data_nombre.$error &&
+            !this.$v.data_descripcion.$error &&
+            !this.$v.data_categoria.$error &&
+            !this.$v.data_tipo_producto.$error &&
+            !this.$v.data_tipo_calzado.$error &&
+            !this.$v.data_genero.$error &&
+            !this.$v.data_material.$error )
+        },
+        actualizar_datos () {
+            if (this.validar_formulario()) {
+                let id = this.$store.state.user.id
+                let ruc = this.$route.params.ruc
+
+                let token = this.$store.state.token
+                let option = {
+                    url: process.env.VUE_APP_URL_SERVER+"/api/act_cabproducto",
+                    method: 'POST',
+                    headers: {
+                        'access-token':token,
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json;charset=UTF-8'
+                    },
+                    data: {
+                        id: id,
+                        ruc: ruc,
+                        producto_id: this.producto_id,
+                        nombre: this.data_nombre,
+                        descripcion: this.data_descripcion,
+                        marca: this.data_marca,
+                        categoria: this.data_categoria,
+                        tipo_producto: this.data_tipo_producto,
+                        tipo_calzado: this.data_tipo_calzado,
+                        material: this.data_material,
+                        genero: this.data_genero
+                    }
+                }
+                axios(option)
+                .then(res => {
+                    let data = res.data
+                    switch (data.cod)
+                    {
+                        case "200": this.$toast.success("Campos actualizados")
+                        break;
+                        case "403": EventBus.$emit("force_logout")
+                    }
+                })
+            }
+        }
     }
 }
 </script>

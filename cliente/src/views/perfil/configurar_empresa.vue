@@ -22,11 +22,11 @@
                         <div class="grey lighten-3 py-5">
                             <h1 class="d-inline ml-8 display-1">Actualizar logo</h1>
                         </div>
-                        <logo > </logo>
+                        <logo :url_logo="url_logo" @cambio_logo="cambio_logo"> </logo>
                         <div class="grey lighten-3 py-5">
                             <h1 class="d-inline ml-8 display-1">Actualizar imagen de portada</h1>
                         </div>
-                        <portada :portada="portada" @cambio="act_portada"></portada>
+                        <portada :portada="portada_envio" @cambio_portada="act_portada"></portada>
                     </v-tab-item>
                     <v-tab-item>
                         <div class="grey lighten-3 py-5">
@@ -110,7 +110,7 @@ export default {
             descripcion: '',
             producto: '',
             url_logo: '',
-            portada:'',
+            portada_envio:'',
             dialog_producto: false
         }
     },
@@ -125,8 +125,10 @@ export default {
         this.obtener_datos();
     },
     methods: {
+        cambio_logo (nueva_url) {
+            this.url_logo=nueva_url
+        },
         agregar_producto (producto) {
-            console.log(producto)
             this.producto.push(producto)
         },
         act_length_contacto (array) {
@@ -166,8 +168,8 @@ export default {
                 this.$toast.error("Solo puede guardar maximo 5 locaciones")
             }
         },
-        act_portada () {
-            this.portada=this.ruc
+        act_portada (nueva_url) {
+            this.portada_envio=nueva_url
         },
         ingresar_datos (datos) {
             this.razon_social = datos[0].razon_social
@@ -178,7 +180,7 @@ export default {
             this.nombre_comercial = datos[0].nombre_comercial
             this.producto = datos[0].producto
             this.url_logo = datos[0].url_logo
-            this.portada = datos[0].url_portada
+            this.portada_envio = datos[0].url_portada
             this.descripcion = datos[0].descripcion
         },
         obtener_datos () {

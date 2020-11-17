@@ -31,7 +31,7 @@ const empresa=new Schema({
         tipo_sede:String,
         direccion:String
     }],
-    categorias:[String],
+    categorias:[],
     producto:[{
         tipo_producto:{
             default:"",
@@ -73,7 +73,7 @@ const empresa=new Schema({
             plantilla:String,
             suela:String
         },
-        colores:[{color:String}]
+        colores:[{color:String, nombre:String}]
     }],
     user_id:String,
 });

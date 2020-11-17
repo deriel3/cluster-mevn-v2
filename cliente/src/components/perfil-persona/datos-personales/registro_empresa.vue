@@ -29,6 +29,7 @@
                             :error-messages="rucErrors"
                             :counter="11"
                             label="Ruc"
+                            type="number"
                             required
                             @input="$v.ruc.$touch()"
                             @blur="$v.ruc.$touch()"
@@ -417,6 +418,7 @@ export default {
             !this.$v.contacto.$error &&
             !this.$v.persona.$error )
             {
+                let segundos= new Date().getTime();
                 let id = this.$store.state.user.id
                 let token = this.$store.state.token
                 let parameter = new FormData();
@@ -424,8 +426,11 @@ export default {
                 parameter.append('ruc',this.ruc)
                 parameter.append('razon_social',this.razon_social)
                 parameter.append('nombre_comercial',this.nombre_comercial)
-                parameter.append('categoria',this.categoria)
+                for(let i=0;i < this.categoria.length; i++) {
+                    parameter.append('categoria',this.categoria[i])
+                }
                 parameter.append('accion',1)
+                parameter.append('segundo', segundos)
                 parameter.append('image', this.file)
                 parameter.append('tipo_sede', this.tipo_sede)
                 parameter.append('direccion', this.direccion)
@@ -449,7 +454,7 @@ export default {
                         case "200":this.$toast.success('Empresa creada')
                         let empresa_creada = {
                             ruc: this.ruc,
-                            url_logo: this.ruc+".png",
+                            url_logo: segundos+"-"+this.ruc+".png",
                             razon_social: this.razon_social
                         }
                         EventBus.$emit('nueva_empresa',empresa_creada);

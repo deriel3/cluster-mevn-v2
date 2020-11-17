@@ -165,36 +165,50 @@ export default {
         },
     },
     methods: {
+        validar () {
+            this.$v.data_razon_social.$touch()
+            this.$v.data_nombre_comercial.$touch()
+            this.$v.data_categoria.$touch()
+            this.$v.data_descripcion.$touch()
+        },
         guardar_datos () {
-            let id = this.$store.state.user.id
-            let token = this.$store.state.token
-            let option = {
-                url: process.env.VUE_APP_URL_SERVER+"/api/act_datos",
-                method: 'POST',
-                headers: {
-                    'access-token':token,
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json;charset=UTF-8'
-                },
-                data: {
-                    id: id,
-                    ruc: this.data_ruc,
-                    razon_social: this.data_razon_social,
-                    nombre_comercial: this.data_nombre_comercial,
-                    descripcion: this.data_descripcion,
-                    categorias: this.data_categoria
+            this.validar ()
+            if( !this.$v.data_razon_social.$error &&
+                !this.$v.data_nombre_comercial.$error &&
+                !this.$v.data_categoria.$error &&
+                !this.$v.data_descripcion.$error
+            )
+            {
+                let id = this.$store.state.user.id
+                let token = this.$store.state.token
+                let option = {
+                    url: process.env.VUE_APP_URL_SERVER+"/api/act_datos",
+                    method: 'POST',
+                    headers: {
+                        'access-token':token,
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json;charset=UTF-8'
+                    },
+                    data: {
+                        id: id,
+                        ruc: this.data_ruc,
+                        razon_social: this.data_razon_social,
+                        nombre_comercial: this.data_nombre_comercial,
+                        descripcion: this.data_descripcion,
+                        categorias: this.data_categoria
+                    }
                 }
+                axios(option)
+                .then(res => {
+                    let data = res.data
+                    switch (data.cod)
+                    {
+                        case "200": this.$toast.success("Campos actualizados")
+                        break;
+                        case "403": EventBus.$emit("force_logout")
+                    }
+                })
             }
-            axios(option)
-            .then(res => {
-                let data = res.data
-                switch (data.cod)
-                {
-                    case "200": this.$toast.success("Campos actualizados")
-                    break;
-                    case "403": EventBus.$emit("force_logout")
-                }
-            })
         }
     }
 }

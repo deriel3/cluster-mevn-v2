@@ -8,7 +8,7 @@ module.exports={
     storage:multer.diskStorage({
         destination: (req,file,cb)=>{
             const userID=req.body.id
-            const dir ='../cliente/src/assets/empresas/'+userID
+            const dir ='./src/assets/empresas/'+userID
             fs.exists(dir,exist=>{
                 if(!exist) return fs.mkdir(dir,error=>cb(error,dir))
                 return cb(null,dir)
@@ -16,7 +16,9 @@ module.exports={
         },
         filename: (req,file,db)=>{
             const empresaID=req.body.ruc
-            db(null,empresaID+path.extname(file.originalname))
+            const segundo=req.body.segundo
+            const extension = path.extname(file.originalname)
+            db(null,segundo+"-"+empresaID+extension.toLowerCase())
             
         }
     }),
@@ -25,7 +27,7 @@ module.exports={
             const userID=req.body.id
             const productoCOD=req.body.codigo
             const ruc=req.body.ruc
-            const dir ='../cliente/src/assets/empresas/'+userID+"/"+ruc+"-"+productoCOD
+            const dir ='./src/assets/empresas/'+userID+"/"+ruc+"-"+productoCOD.toLowerCase()
             fs.exists(dir,exist=>{
                 if(!exist) return fs.mkdir(dir,error=>cb(error,dir))
                 return cb(null,dir)
@@ -33,8 +35,9 @@ module.exports={
         },
         filename: (req,file,db)=>{
             const productoCOD=req.body.codigo
+            const segundo = req.body.segundo
             const extension = path.extname(file.originalname)
-            db(null,"p-"+productoCOD+extension.toLowerCase())
+            db(null,segundo+"-p-"+productoCOD.toLowerCase()+extension.toLowerCase())
             
         }
     }),
@@ -43,7 +46,7 @@ module.exports={
             const userID=req.body.id
             const productoCOD=req.body.codigo
             const ruc=req.body.ruc
-            const dir ='./src/public/empresas/'+userID+"/"+ruc+"-"+productoCOD+"/galeria"
+            const dir ='./src/assets/empresas/'+userID+"/"+ruc+"-"+productoCOD.toLowerCase()+"/galeria"
             fs.exists(dir,exist=>{
                 if(!exist) return fs.mkdir(dir,error=>cb(error,dir))
                 return cb(null,dir)
@@ -52,14 +55,14 @@ module.exports={
         filename: (req,file,db)=>{
             const productoCOD=req.body.codigo
             const nombre=req.body.nombre
-            db(null,nombre+"-"+productoCOD+path.extname(file.originalname))
-            
+            const extension = path.extname(file.originalname)
+            db(null,nombre+"-"+productoCOD.toLowerCase()+extension.toLowerCase())
         }
     }),
     storage4:multer.diskStorage({
         destination: (req,file,cb)=>{
             const userID=req.body.id
-            const dir ='../cliente/src/assets/empresas/'+userID
+            const dir ='./src/assets/empresas/'+userID
             fs.exists(dir,exist=>{
                 if(!exist) return fs.mkdir(dir,error=>cb(error,dir))
                 return cb(null,dir)
@@ -67,7 +70,9 @@ module.exports={
         },
         filename: (req,file,db)=>{
             const empresaID=req.body.ruc
-            db(null,"portada-"+empresaID+path.extname(file.originalname))
+            const segundo = req.body.segundo
+            const extension = path.extname(file.originalname)
+            db(null,segundo+"-portada"+empresaID+extension.toLowerCase())
             
         }
     }),

@@ -40,6 +40,7 @@
 import { validationMixin } from 'vuelidate'
 import { required } from 'vuelidate/lib/validators'
 import axios from 'axios'
+import { EventBus } from '../../EventBus/EventBus'
 export default {
     props: {
         portada: ''
@@ -53,6 +54,7 @@ export default {
         guardar_logo () {
             this.$v.file.$touch()
             if (!this.$v.file.$error) { 
+                let segundo = new Date().getTime()
                 let id = this.$store.state.user.id
                 let ruc = this.$route.params.ruc
                 let token = this.$store.state.token
@@ -60,6 +62,8 @@ export default {
                 parameter.append('id', id)
                 parameter.append('ruc',ruc)
                 parameter.append('accion',2)
+                parameter.append('segundo', segundo)
+                parameter.append('url_anterior', this.portada)
                 parameter.append('image', this.file)
                 let option = {
                     url: process.env.VUE_APP_URL_SERVER+"/api/act_portada/"+id,
@@ -72,16 +76,30 @@ export default {
                 }
                 axios(option)
                 .then(res => {
-                    this.$emit("cambio")
+                    let data = res.data
+                    switch (data.cod)
+                    {
+                        case '200': this.$toast.success("Portada actualizada")
+                        let nueva_url = segundo+'-portada'+ruc+".png"
+                        this.$emit("cambio_portada", nueva_url)
+                        this.reiniciar()
+                        break
+                        case "403": EventBus.$emit("force_logout")
+                    }
                 })
             }
         },
+        reiniciar () {
+            this.vista = false
+            this.file = ''
+        },
         imagen () {
-            
-            let id = this.$store.state.user.id
-            let ruc = this.$route.params.ruc
-            let imagen = require("../../assets/empresas/"+id+"/portada-"+ruc+".png")
-            return imagen
+            if (this.portada !== '')
+            {
+                let id = this.$store.state.user.id
+                let ruc = this.$route.params.ruc
+                return process.env.VUE_APP_URL_SERVER+"/assets/empresas/"+id+"/"+this.portada
+            }
         },
         vista_previa_cambio (e) {
             const file = e;
