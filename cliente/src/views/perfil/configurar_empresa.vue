@@ -3,7 +3,8 @@
         <v-btn color="error" :to="{'name':'perfil-datos', 'params':{'usuario':usuario}}" class="my-3">
             Volver
         </v-btn>
-        <v-btn color="success" class="my-3 mx-3">
+        <v-btn color="success" class="my-3 mx-3"
+        :to="{'name':'vista-previa-empresa', 'params':{'ruc':ruc,'usuario':usuario}}">
             Vista Previa
         </v-btn>
         <v-card>
@@ -68,7 +69,23 @@
                         <div v-else class="text-center my-8"><v-icon>mdi-information-outline</v-icon><p>No hay ninguna producto registrado</p></div>
                     </v-tab-item>
                     <v-tab-item>
-                        <h1>Activar o desactivar empresa</h1>
+                        <div class="grey lighten-3 py-5">
+                            <v-row>
+                                <v-col md="8" cols="8">
+                                    <div class="ml-8">
+                                        <h1 class="display-1">Activar Empresa</h1>
+                                        <small>Active la empresa para que este pueda ser vista y visitada por los compradores de la pagina.
+                                            Tenga en cuenta que la cantidad de informacion registrada influye en las visitas de su empresa.
+                                        </small>
+                                    </div>
+                                </v-col>
+                                <v-col md="4" cols="4" align="center" class="mt-3">
+                                    <v-btn class="success" @click="cambiar_estado(1)"  v-if="estado==0"> Activar</v-btn>
+                                    <v-btn v-else class="error" @click="cambiar_estado(0)">Desactivar</v-btn>
+                                </v-col>
+                            </v-row>
+                            
+                        </div>
                     </v-tab-item>
                 </v-tabs-items>
             </div>
@@ -125,6 +142,43 @@ export default {
         this.obtener_datos();
     },
     methods: {
+        cambiar_estado (estado) {
+            let mensaje = 'Empresa {estado} satisfactoriamente.'
+            if (estado === 1) {
+                mensaje = mensaje.replace('{estado}', 'activada')
+            } 
+            else {
+                mensaje = mensaje.replace('{estado}', 'desactivada')
+            }
+            let id = this.$store.state.user.id
+            let token = this.$store.state.token
+            let ruc = this.$route.params.ruc
+            let option = {
+                url: process.env.VUE_APP_URL_SERVER+'/api/empresa_estado',
+                method: "POST",
+                headers: {
+                    'access-token': token,
+                    'Accept':'application/json',
+                    'Content-type':'application/json'
+                },
+                data: {
+                    id: id,
+                    estado: estado,
+                    ruc: ruc
+                }
+            }
+            axios(option)
+            .then(res => {
+                let data = res.data
+                switch (data.cod)
+                {
+                    case '200': this.$toast.success(mensaje)
+                    this.estado = estado
+                    break
+                    case '403': EventBus.$emit('force_logout')
+                }
+            })
+        },
         cambio_logo (nueva_url) {
             this.url_logo=nueva_url
         },

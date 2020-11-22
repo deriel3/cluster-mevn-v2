@@ -18,7 +18,7 @@
                     color="rgba(0, 0, 0, 0)"
                 >
                     <v-spacer></v-spacer>
-                    <span v-if="item.estado==='1'" class="green px-3 white--text">Activo</span>
+                    <span v-if="item.estado=== 1 " class="green px-3 white--text">Activo</span>
                     <span v-else class="red px-3 white--text">Inactivo</span>
                 </v-app-bar>
                 </v-img>
@@ -34,7 +34,8 @@
                         <v-icon>mdi-cog</v-icon>
                     </v-btn>
                      <v-spacer></v-spacer>
-                    <v-btn icon>
+                    <v-btn icon
+                     :to="{'name':'vista-previa-empresa', 'params':{'ruc':item.ruc,'usuario':usuario}}">
                         <v-icon>mdi-eye</v-icon>
                     </v-btn>
                 </v-card-actions>

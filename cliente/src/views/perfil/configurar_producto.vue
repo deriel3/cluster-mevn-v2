@@ -56,6 +56,25 @@
                         </div>
                         <colores :colores="colores" :producto_id="id" :empresa_id="empresa_id" @nuevo_color="nuevo_color" @eliminar_color="eliminar_color"></colores>
                     </v-tab-item>
+                    <v-tab-item>
+                        <div class="grey lighten-3 py-5">
+                            <v-row>
+                                <v-col md="8" cols="8">
+                                    <div class="ml-8">
+                                        <h1 class="display-1">Activar Producto</h1>
+                                        <small>Active el producto para que este pueda ser visto y consultado por los visitantes de la pagina.
+                                            Tenga en cuenta que la cantidad de informacion registrada influye en las visitas de su producto.
+                                        </small>
+                                    </div>
+                                </v-col>
+                                <v-col md="4" cols="4" align="center" class="mt-3">
+                                    <v-btn class="success" @click="cambiar_estado(1)"  v-if="estado==0"> Activar</v-btn>
+                                    <v-btn v-else class="error" @click="cambiar_estado(0)">Desactivar</v-btn>
+                                </v-col>
+                            </v-row>
+                            
+                        </div>
+                    </v-tab-item>
                 </v-tabs-items>
             </div>
             </v-card-text>
@@ -97,7 +116,8 @@ export default {
             id: '',
             imagen_portada: '',
             precios: '',
-            colores: ''
+            colores: '',
+            estado: ''
         }
     },
     created () {
@@ -112,6 +132,42 @@ export default {
         }
     },
     methods: {
+        cambiar_estado (estado) {
+            let mensaje = 'Producto {estado} satisfactoriamente.'
+            if (estado === 1) {
+                mensaje = mensaje.replace('{estado}', 'activado')
+            } 
+            else {
+                mensaje = mensaje.replace('{estado}', 'desactivado')
+            }
+            let id = this.$store.state.user.id
+            let token = this.$store.state.token
+            let option = {
+                url: process.env.VUE_APP_URL_SERVER+'/api/producto_estado',
+                method: "POST",
+                headers: {
+                    'access-token': token,
+                    'Accept':'application/json',
+                    'Content-type':'application/json'
+                },
+                data: {
+                    id: id,
+                    estado: estado,
+                    producto_id: this.id
+                }
+            }
+            axios(option)
+            .then(res => {
+                let data = res.data
+                switch (data.cod)
+                {
+                    case '200': this.$toast.success(mensaje)
+                    this.estado = estado
+                    break
+                    case '403': EventBus.$emit('force_logout')
+                }
+            })
+        },
         eliminar_color (index)
         {
             this.colores.splice(index,1)
@@ -161,6 +217,7 @@ export default {
             this.imagen_portada = data.imagen_portada
             this.precios = data.precios
             this.colores = data.colores
+            this.estado = data.estado
         },
         obtener_datos () {
             let id = this.$store.state.user.id

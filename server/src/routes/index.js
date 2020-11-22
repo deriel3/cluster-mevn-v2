@@ -174,7 +174,7 @@ router.get('/mi-perfil/:id',middlewares.rutasProtegidas_get,async(req,res)=>{
     }
     let mac=await macaddress.one()
     let datos=await usuario.findOne(data_envio).select('apellido correo_electronico genero nombre pais sesiones_dispositivos')
-    let empresas=await empresa.find({"user_id":req.params.id}).select('ruc razon_social url_logo')
+    let empresas=await empresa.find({"user_id":req.params.id}).select('ruc razon_social url_logo estado')
     res.json({
         cod:"200",
         data:datos,
@@ -515,6 +515,28 @@ router.post('/empresa_estado',middleware.rutasProtegidas_post,async(req,res)=>{
     if(empresa_act!=null) res.json({cod:"200"})
     else res.json({cod:"201"})
 })
+router.post('/vista-previa',middleware.rutasProtegidas_post,async(req,res)=> {
+    let mis_favoritos=await empresa.find({"ruc":req.body.ruc}).select('_id url_logo cantidad_favoritos categorias descripcion forma_contacto locacion razon_social url_portada')
+    res.json({cod:"200",data:mis_favoritos})
+})
+router.post('/vista_obtenerproducto',middleware.rutasProtegidas_post,async(req,res)=> {
+    let producto=await empresa.aggregate([
+        {$match:{"ruc":req.body.ruc}},
+        {$unwind:"$producto"},
+        {$match:{"producto.estado":1}},
+        {$project:{array:"$producto",nombre:"$razon_social"}}
+    ]).skip(req.body.pagina>0?((req.body.pagina-1)*30):0).limit(30)
+    if(producto != null) {res.json({cod:"200",data:producto})}
+    else {res.json({cod:"201"})}
+})
+router.post('/vista_obtenerunproducto/',middleware.rutasProtegidas_post,async(req,res)=>{
+    let producto= await empresa.find({"ruc":req.body.ruc},{"producto":{$elemMatch:{"codigo":req.body.codigo}}})
+    .select('url_logo url_portada razon_social cantidad_favoritos')
+    res.json({cod:"200",data:producto})
+})
+
+
+
 router.get('/obt_empresas',async (req,res)=>{
     let mis_favoritos=await empresa.find({"estado":"1"}).sort({razon_social:'ascending'}).select('id ruc razon_social url_logo cantidad_favoritos categorias producto.nombre')
     res.json({cod:"200",data:mis_favoritos})

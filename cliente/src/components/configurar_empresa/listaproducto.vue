@@ -12,7 +12,7 @@
                     color="rgba(0, 0, 0, 0)"
                 >
                     <v-spacer></v-spacer>
-                    <span v-if="item.estado==='1'" class="green px-3 white--text">Activo</span>
+                    <span v-if="item.estado===1" class="green px-3 white--text">Activo</span>
                     <span v-else class="red px-3 white--text">Inactivo</span>
                 </v-app-bar>
                 </v-img>
