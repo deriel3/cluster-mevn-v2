@@ -1,7 +1,7 @@
 <template>
     <v-container class="d-flex">
-        <div class="px-5 py-5" align="center" style="width:100%">
-            <v-card justify="space-around" width="50%" class="mx-5">
+        <div class="px-3 py-5" align="center" style="width:100%">
+            <v-card justify="space-around"  class="">
                 <v-card-text>
                     <v-row>
                         <v-col

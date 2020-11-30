@@ -1,7 +1,7 @@
 <template>
     <v-container id="funciona">
-        <div class="display-1 container" align="center">
-            <h1 class="mt-5 mb-5">¿Como Funciona?</h1>
+        <div class="display-2 container" align="center">
+            <h3 class="mt-5 mb-5">¿Como Funciona?</h3>
             <v-divider width="10%" style="max-height:10px;height:10px" class="primary"></v-divider>
         </div>
         

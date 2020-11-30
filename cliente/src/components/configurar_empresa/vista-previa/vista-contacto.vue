@@ -56,7 +56,9 @@
             <div align="center">
                 <v-btn
                 dark
+                :href="redes.facebook"
                 color="blue"
+                target="_blank"
                 class="ma-1"
                 min-width="40px"
                 width="40px"
@@ -66,7 +68,9 @@
                 </v-btn>
                 <v-btn
                 dark
+                :href="redes.instagram"
                 color="pink"
+                target="_blank"
                 class="ma-1"
                 min-width="40px"
                 width="40px"
@@ -76,17 +80,21 @@
                 </v-btn>
                 <v-btn
                 dark
-                color="red"
+                target="_blank"
+                color="green"
                 class="ma-1"
+                :href="redes.whats"
                 min-width="40px"
                 width="40px"
                 depressed
                 >
-                    <v-icon>mdi-youtube</v-icon>
+                    <v-icon>mdi-whatsapp</v-icon>
                 </v-btn>
                 <v-btn
                 dark
+                :href="redes.paginaweb"
                 color="black"
+                target="_blank"
                 class="ma-1"
                 min-width="40px"
                 width="40px"
@@ -102,7 +110,8 @@
 export default {
     props: {
         forma_contacto: '',
-        locaciones: ''
+        locaciones: '',
+        redes: '' 
     },
     filters: {
         uppercase (valor){

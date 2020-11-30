@@ -11,6 +11,7 @@
                 <v-img
                 v-bind:id="index"
                 height="400px"
+                :lazy-src="getLazyImage(index)"
                 :src="getImage(index)"
                 >
                 <v-app-bar
@@ -21,9 +22,21 @@
                     <span v-if="item.estado=== 1 " class="green px-3 white--text">Activo</span>
                     <span v-else class="red px-3 white--text">Inactivo</span>
                 </v-app-bar>
+                <template v-slot:placeholder>
+                    <v-row
+                        class="fill-height ma-0"
+                        align="center"
+                        justify="center"
+                    >
+                        <v-progress-circular
+                        indeterminate
+                        color="grey lighten-5"
+                        ></v-progress-circular>
+                    </v-row>
+                </template>
                 </v-img>
                 <v-card-text>
-                    <div class="font-weight-bold ml-8 mb-2 black--text text-center">
+                    <div class="font-weight-bold mb-2 black--text text-center">
                         <span>{{item.ruc | uppercase}}</span>
                         <h1>{{item.razon_social | uppercase}}</h1>
                     </div>
@@ -58,7 +71,12 @@ export default {
         getImage(ind)
         {
             let id = this.$store.state.user.id
-            return process.env.VUE_APP_URL_SERVER+"/assets/empresas/"+id+"/"+this.lista_empresa[ind].url_logo
+            return process.env.VUE_APP_URL_SERVER+"/api/imagen/logo?id="+id+"&imagen="+this.lista_empresa[ind].url_logo
+        },
+        getLazyImage(ind)
+        {
+            let id = this.$store.state.user.id
+            return process.env.VUE_APP_URL_SERVER+"/api/imagen/logo?id="+id+"&imagen="+this.lista_empresa[ind].url_logo+"&width=10&height=10"
         }
     },
     filters: {

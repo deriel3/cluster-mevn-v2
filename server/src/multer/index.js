@@ -5,12 +5,20 @@ const fs=require('fs')
 const empresa=require('../models/empresa')
 
 module.exports={
+    //storage de logo de la empresa
     storage:multer.diskStorage({
         destination: (req,file,cb)=>{
             const userID=req.body.id
+            const ruc = req.body.ruc
             const dir ='./src/assets/empresas/'+userID
+            const dir2 = './src/assets/empresas/'+userID+'/'+ruc
             fs.exists(dir,exist=>{
-                if(!exist) return fs.mkdir(dir,error=>cb(error,dir))
+                if(!exist) {
+                    fs.mkdir(dir,error=>cb(error,dir))
+                    fs.exists(dir2,ex => {
+                        return fs.mkdir(dir2,erro=>cb(erro,dir2))
+                    })
+                } 
                 return cb(null,dir)
             })
         },
@@ -19,9 +27,9 @@ module.exports={
             const segundo=req.body.segundo
             const extension = path.extname(file.originalname)
             db(null,segundo+"-"+empresaID+extension.toLowerCase())
-            
         }
     }),
+    //storage de producto
     storage2:multer.diskStorage({
         destination: (req,file,cb)=>{
             const userID=req.body.id
@@ -41,6 +49,7 @@ module.exports={
             
         }
     }),
+    //storage de galeria de producto
     storage3:multer.diskStorage({
         destination: (req,file,cb)=>{
             const userID=req.body.id
@@ -59,6 +68,7 @@ module.exports={
             db(null,nombre+"-"+productoCOD.toLowerCase()+extension.toLowerCase())
         }
     }),
+    //storage de portada de empresas
     storage4:multer.diskStorage({
         destination: (req,file,cb)=>{
             const userID=req.body.id

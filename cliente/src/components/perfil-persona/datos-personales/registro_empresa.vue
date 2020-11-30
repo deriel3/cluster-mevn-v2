@@ -59,10 +59,12 @@
                     @blur="$v.nombre_comercial.$touch()"
                     ></v-text-field>
                     <v-file-input
+                        id="imagen"
                         v-model="file"
                         :error-messages="urlErrors"
                         @input="$v.file.$touch()"
                         @blur="$v.file.$touch()"
+                        @change="verificarimagen"
                         accept="image/x-png"
                         label="Logo de la empresa (PNG)"
                     ></v-file-input>
@@ -227,6 +229,7 @@ import { validationMixin } from 'vuelidate'
 import { required, maxLength, email, sameAs, minLength } from 'vuelidate/lib/validators'
 import axios from 'axios'
 import { EventBus } from '../../../EventBus/EventBus'
+import $ from 'jquery'
 export default {
     mixins: [validationMixin],
 
@@ -244,6 +247,7 @@ export default {
     },
     data () {
         return{
+            lazy_image: {},
             paso: 1,
             ruc: '',
             razon_social: '',
@@ -329,6 +333,17 @@ export default {
         },
     },
     methods: {
+        verificarimagen (e) {
+            const file = e;
+            if(file && typeof file.type !== 'undefined')
+            {
+                const validImageTypes = 'image/png';
+                if (validImageTypes !== file.type) {
+                    this.file = {}
+                    this.$toast.error('Solo se acepta formato PNG')
+                }
+            }
+        },
         Configurar_empresa_creada(){
             
         },

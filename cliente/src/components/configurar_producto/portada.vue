@@ -4,8 +4,21 @@
             <v-card justify="space-around" width="500" class="mx-5">
                 <v-card-title class="primary"><h1 class="py-3">Imagen de portada actual</h1></v-card-title>
                 <v-img
-                max-width="350px"
-                :src="imagen()">
+                height="350px"
+                :src="imagen()"
+                :lazy-src="lazy_imagen()">
+                <template v-slot:placeholder>
+                    <v-row
+                        class="fill-height ma-0"
+                        align="center"
+                        justify="center"
+                    >
+                        <v-progress-circular
+                        indeterminate
+                        color="grey lighten-5"
+                        ></v-progress-circular>
+                    </v-row>
+                </template>
                 </v-img>
                 <v-card-title class="primary"><h1 class="py-3">Nueva imagen de portada</h1></v-card-title>
                 <v-file-input
@@ -92,19 +105,40 @@ export default {
             }
         },
         imagen () {
-            let id = this.$store.state.user.id
-            let ruc = this.$route.params.ruc
-            let codigo = this.$route.params.codigo
-            return process.env.VUE_APP_URL_SERVER+"/assets/empresas/"+id+"/"+ruc+"-"+codigo.toLowerCase()+"/"+this.imagen_portada.toLowerCase()
+            if (this.imagen_portada.toLowerCase() !== '')
+            {
+                let id = this.$store.state.user.id
+                let ruc = this.$route.params.ruc
+                let codigo = this.$route.params.codigo
+                return process.env.VUE_APP_URL_SERVER+"/api/imagen/producto?id="+id+"&imagen="+this.imagen_portada.toLowerCase()+"&ruc="+ruc+"&codigo="+codigo.toLowerCase()
+            }
+        },
+        lazy_imagen () {
+            if (this.imagen_portada.toLowerCase() !== '')
+            {
+                let id = this.$store.state.user.id
+                let ruc = this.$route.params.ruc
+                let codigo = this.$route.params.codigo
+                return process.env.VUE_APP_URL_SERVER+"/api/imagen/producto?id="+id+"&imagen="+this.imagen_portada.toLowerCase()+"&ruc="+ruc+"&codigo="+codigo.toLowerCase()+"&width=10&height=10"
+            }
         },
         vista_previa_cambio (e) {
             const file = e;
-            if(typeof file !== 'undefined')
+            if(typeof file !== 'undefined' && typeof file.type !== 'undefined')
             {
                 if(this.file)
                 {
-                    this.vista_previa = URL.createObjectURL(file);
-                    this.vista = true
+                    const validImageTypes = 'image/png';
+                    if (validImageTypes === file.type) {
+                        this.vista_previa = URL.createObjectURL(file);
+                        this.vista = true   
+                    }
+                    else
+                    {
+                        this.file = {}
+                        this.$toast.error('Solo se acepta formato PNG')
+                        this.vista = false
+                    }
                 }
                 else
                 {

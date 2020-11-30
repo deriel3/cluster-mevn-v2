@@ -1,5 +1,10 @@
 <template>
     <v-container>
+        <v-btn
+        class="error mx-3"
+        :to="{'name':'configrar-empresa', 'params':{'ruc':ruc,'usuario':usuario}}">
+            Volver
+        </v-btn>
         <vistaportada
         :razon_social="empresa.razon_social"
         :portada="empresa.url_portada"
@@ -10,7 +15,7 @@
             md="3"
             cols="12"
             sm="6">
-                <vistacontacto :forma_contacto="empresa.forma_contacto" :locaciones="empresa.locacion"></vistacontacto>
+                <vistacontacto :forma_contacto="empresa.forma_contacto" :locaciones="empresa.locacion" :redes="empresa.redes"></vistacontacto>
             </v-col>
             <v-col
             md="9"
@@ -35,16 +40,20 @@ export default {
     },
     data () {
         return {
-            empresa: ''
+            empresa: '',
+            ruc: '',
+            usuario: ''
         }
     },
     created () {
+        this.ruc = this.$route.params.ruc
+        this.usuario = this.$route.params.usuario
         this.obtener_data()
     },
     methods: {
         subir_data (data) {
-            console.log(data)
             this.empresa = data
+            console.log(data)
         },
         obtener_data () {
             let id = this.$store.state.user.id

@@ -13,6 +13,7 @@ const jwt = require('jsonwebtoken');
 const moment = require('moment-timezone');
 const DeviceDetector = require('node-device-detector');
 const fs=require('fs')
+const resize = require('../resize/resize')
 const path=require('path')
 
 const middlewares=require('../middleware/middleware')
@@ -23,6 +24,41 @@ const empresa=require('../models/empresa')
 const usuario=require('../models/user');
 const admin=require('../models/admin');
 const middleware = require('../middleware/middleware');
+
+router.get('/imagen/:tipo', async (req,res) => {
+    if(req.query.imagen !== '')
+    {
+        const base = './src/assets/empresas/'
+        let url = base
+        switch (req.params.tipo)
+        {
+            case 'logo': url = url+ req.query.id+ "/"+ req.query.imagen
+            break
+            case 'portada': url = url+ req.query.id+ "/"+ req.query.imagen
+            break
+            case 'producto': url = url+ req.query.id+ "/"+req.query.ruc+"-"+req.query.codigo+"/"+req.query.imagen
+            break
+            case 'galeria': url = url+ req.query.id+ "/"+req.query.ruc+"-"+req.query.codigo+"/galeria/"+req.query.imagen
+            break
+            case 'portada-default': url = './src/assets/fotos-default/default-portada.png'
+        }
+        const widthString = req.query.width
+        const heightString = req.query.height
+        let width, height
+        if (widthString) {
+            width = parseInt(widthString)
+        }
+        if (heightString) {
+            height = parseInt(heightString)
+        }
+        res.type('image/png');
+        resize(url, 'png', width, height).pipe(res);
+    }
+    else
+    {
+        res.json({cod:'201'})
+    }
+})
 
 router.get('/empresa',async (req,res)=>{
     const lista_empresa=await empresa.find()
@@ -242,12 +278,13 @@ router.get('/obt_misfavoritos/:id',middlewares.rutasProtegidas_get,async(req,res
     res.json({cod:"200",data:mis_favoritos})
 })
 router.post('/nueva-empresa/:id',[middlewares.rutasProtegidas_get , upload.single('image')],async(req,res)=>{
+    
     let cantidad=await empresa.find({'user_id':req.params.id}).select('ruc');
     if(cantidad.length<=5)
     {
         let url=req.body.segundo+"-"+req.body.ruc+".png"
         const nueva_empresa=new empresa({ruc:req.body.ruc,
-            razon_social:req.body.razon_social,
+            razon_social:req.body.razon_social.toLowerCase(),
             nombre_comercial:req.body.nombre_comercial,
             url_logo: url,
             user_id: req.body.id,
@@ -297,7 +334,7 @@ router.get('/:id/obt_empresa/:ruc',middlewares.rutasProtegidas_get,async(req,res
     const userID=req.params.id
     const empresaRUC=req.params.ruc
     let verificar_propiedad=await empresa.find({"ruc":empresaRUC,"user_id":userID}).select(
-        'descripcion estado url_portada categorias _id ruc razon_social nombre_comercial url_logo user_id forma_contacto locacion producto.nombre producto.imagen_portada producto.codigo producto.estado'
+        'descripcion estado url_portada categorias _id ruc razon_social nombre_comercial url_logo user_id forma_contacto locacion redes precios producto.nombre producto.imagen_portada producto.codigo producto.estado'
     )
     if(verificar_propiedad!=null && verificar_propiedad.length>0)
     {
@@ -348,14 +385,10 @@ router.post('/act_portada/:id',[middlewares.rutasProtegidas_get,upload_portada_e
 })
 router.post('/act_datos',middlewares.rutasProtegidas_post,async(req,res)=>{
     let empresa_act =await empresa.findOneAndUpdate({'ruc':req.body.ruc,"user_id":req.body.id},{$set:{
-        "razon_social":req.body.razon_social,
+        "razon_social":req.body.razon_social.toLowerCase(),
         "nombre_comercial":req.body.nombre_comercial,
-        "categorias":[],
+        "categorias":req.body.categorias,
         "descripcion":req.body.descripcion
-    }})
-    
-    empresa_act =await empresa.findOneAndUpdate({'ruc':req.body.ruc,"user_id":req.body.id},{$set:{
-        "categorias":req.body.categorias
     }})
     res.json({
         cod:"200"
@@ -372,6 +405,14 @@ router.post('/act_locacion',middlewares.rutasProtegidas_post,async(req,res)=>{
 router.post('/act_formacontacto',middlewares.rutasProtegidas_post,async(req,res)=>{
     let empresa_act =await empresa.findOneAndUpdate({'ruc':req.body.ruc,"user_id":req.body.id},{$set:{
         "forma_contacto":req.body.forma_contacto
+    }})
+    res.json({
+        cod:"200"
+    })
+})
+router.post('/act_precios_empresa',middlewares.rutasProtegidas_post,async(req,res)=>{
+    let empresa_act =await empresa.findOneAndUpdate({'ruc':req.body.ruc,"user_id":req.body.id},{$set:{
+        "precios":req.body.precios
     }})
     res.json({
         cod:"200"
@@ -418,9 +459,8 @@ router.post('/act_cabproducto',middlewares.rutasProtegidas_post,async(req,res)=>
 })
 router.post('/obtener_producto/:id/:ruc/:codigo',middlewares.rutasProtegidas_get,async(req,res)=>{
    //let producto=await  empresa.find({"ruc":req.params.ruc,"user_id":req.params.id,"producto":{$elemMatch:{'codigo':req.params.codigo}}}).select('producto')  
-
    let producto=await  empresa.aggregate(
-    [{$unwind: "$producto"}, {$match:{"producto.codigo" : req.params.codigo,"ruc":req.params.ruc}}]
+    [{$unwind: "$producto"}, {$match:{"producto.codigo" : req.params.codigo.toUpperCase(),"ruc":req.params.ruc}}]
    )
    if(producto!=null)
    {
@@ -461,7 +501,6 @@ router.post('/act_galeria/:id',[middlewares.rutasProtegidas_get,upload_galeria.s
 })
 router.post('/eliminar_imagengaleria',middleware.rutasProtegidas_post,async(req,res)=>{
     let ruta=path.join(__dirname,'../','assets/empresas/',req.body.id,'/',req.body.ruc+'-'+req.body.codigo.toLowerCase(),'/galeria/',req.body.ruta.toLowerCase());
-    console.log(ruta)
     fs.unlink(ruta,async(erro)=>{
       if(erro){res.json({"cod":"201"})}
       let galeria=await empresa.updateOne({"_id":req.body.empresa_id, "producto._id":req.body.producto_id},
@@ -495,7 +534,6 @@ router.post('/eliminar_color',middleware.rutasProtegidas_post,async(req,res)=>{
             }
         }
     )
-    console.log(empresa_act)
     if(empresa_act!=null) res.json({cod:"200"})
     else res.json({cod:"201"})
 })
@@ -516,7 +554,7 @@ router.post('/empresa_estado',middleware.rutasProtegidas_post,async(req,res)=>{
     else res.json({cod:"201"})
 })
 router.post('/vista-previa',middleware.rutasProtegidas_post,async(req,res)=> {
-    let mis_favoritos=await empresa.find({"ruc":req.body.ruc}).select('_id url_logo cantidad_favoritos categorias descripcion forma_contacto locacion razon_social url_portada')
+    let mis_favoritos=await empresa.find({"ruc":req.body.ruc}).select('_id url_logo cantidad_favoritos categorias descripcion forma_contacto locacion razon_social url_portada redes')
     res.json({cod:"200",data:mis_favoritos})
 })
 router.post('/vista_obtenerproducto',middleware.rutasProtegidas_post,async(req,res)=> {
@@ -530,17 +568,50 @@ router.post('/vista_obtenerproducto',middleware.rutasProtegidas_post,async(req,r
     else {res.json({cod:"201"})}
 })
 router.post('/vista_obtenerunproducto/',middleware.rutasProtegidas_post,async(req,res)=>{
-    let producto= await empresa.find({"ruc":req.body.ruc},{"producto":{$elemMatch:{"codigo":req.body.codigo}}})
-    .select('url_logo url_portada razon_social cantidad_favoritos')
+    let producto= await empresa.find({"ruc":req.body.ruc},{"producto":{$elemMatch:{"codigo":req.body.codigo.toUpperCase()}}})
+    .select('url_logo url_portada razon_social cantidad_favoritos redes')
     res.json({cod:"200",data:producto})
+})
+router.post('/act_redessociales',middleware.rutasProtegidas_post,async(req,res) => {
+    let empresa_act =await empresa.findOneAndUpdate({'ruc':req.body.ruc,"user_id":req.body.id},{$set:{
+        "redes.facebook":req.body.facebook,
+        "redes.instagram":req.body.instagram,
+        "redes.paginaweb":req.body.paginaweb,
+        "redes.whats": req.body.whats
+    }})
+    res.json({
+        cod:"200"
+    })
+})
+router.post('/borrar_producto',middleware.rutasProtegidas_post,async (req,res) => {
+    let empresa_act=await empresa.updateOne({"_id":req.body.empresa_id},
+        {"$pull":{"producto":{"_id":req.body.producto_id}}}
+    )
+    if(empresa_act!=null) res.json({cod:"200"})
+    else res.json({cod:"201"})
+})
+router.post('/borrar_empresa',middleware.rutasProtegidas_post,async (req,res) => {
+    
+    let empresa_act=await empresa.deleteOne({"_id":req.body.empresa_id})
+    
+    if(empresa_act!=null) res.json({cod:"200"})
+    else res.json({cod:"201"})
 })
 
 
 
 router.get('/obt_empresas',async (req,res)=>{
-    let mis_favoritos=await empresa.find({"estado":"1"}).sort({razon_social:'ascending'}).select('id ruc razon_social url_logo cantidad_favoritos categorias producto.nombre')
+    let mis_favoritos=await empresa.find({"estado":"1"}).sort({'razon_social':1})
+    .select('ruc url_logo razon_social categorias cantidad_favoritos')
+    .skip(req.query.pagina>0?((req.query.pagina-1)*30):0).limit(30)
     res.json({cod:"200",data:mis_favoritos})
 })
+router.get('/obt_empresas/todo',async (req,res)=>{
+    let mis_favoritos=await empresa.find({"estado":"1"}).sort({'razon_social':1})
+    .select('ruc url_logo razon_social categorias cantidad_favoritos precios')
+    res.json({cod:"200",data:mis_favoritos})
+})
+
 router.get('/obt_datos_empresa/:id',async (req,res)=>{
     let mis_favoritos=await empresa.find({"_id":req.params.id}).select('_id url_logo cantidad_favoritos categorias descripcion forma_contacto locacion razon_social')
     res.json({cod:"200",data:mis_favoritos})

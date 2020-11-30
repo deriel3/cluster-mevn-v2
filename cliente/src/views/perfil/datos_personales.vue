@@ -20,7 +20,6 @@
         <v-tabs color="primary" 
         v-model="tab">
             <v-tab>Datos Personales</v-tab>
-            <v-tab>Dispositivos</v-tab>
             <v-tab>Favoritos</v-tab>
             <v-tab>Mis empresas</v-tab>
             <v-tab><v-icon>mdi-cog</v-icon></v-tab>
@@ -43,20 +42,6 @@
                 </v-tab-item>
                 <v-tab-item>
                     <div>
-                        <h1 class="">Dispositivos Activos</h1>
-                    </div>
-                    <tabla :lista_dispositivos="lista_dispositivos" :mac_actual="mac_actual"></tabla>
-                    <div align="center">
-                        <v-btn
-                        justify="center"
-                        color="error"
-                        >
-                            Cerrar todas las sesiones
-                        </v-btn>
-                    </div>
-                </v-tab-item>
-                <v-tab-item>
-                    <div>
                         <h1 class="d-inline ml-8">Empresas Favoritas</h1>
                     </div>
                 </v-tab-item>
@@ -67,7 +52,7 @@
                         v-model="dialog_empresa"
                         max-width="700">
                             <template v-slot:activator="{on,attrs}">
-                                <v-btn  class="d-inline float-right"
+                                <v-btn  class="float-right"
                                 :disabled="lista_empresas.length==6"
                                 fab
                                 small
@@ -80,16 +65,32 @@
                             <registro></registro>
                         </v-dialog>
                     </div>
+                    <br>
                     <empresas v-if="lista_empresas.length>0" :lista_empresa="lista_empresas"></empresas>
                     <div v-else class="text-center my-8"><v-icon>mdi-information-outline</v-icon><p>No hay ninguna empresa registrada</p></div>
                 </v-tab-item>
                 <v-tab-item>
-                    <div>
-                        <h1 class="d-inline ml-8">Configuracion de cuenta</h1>
+                    <div class="ml-8">
+                        <h1 class="d-inline">Configuracion de cuenta</h1>
                     </div>
                     <configuracion></configuracion>
                 </v-tab-item>
+                <v-tab-item>
+                    <div>
+                        <h1 class="">Dispositivos Activos</h1>
+                    </div>
+                    <tabla :lista_dispositivos="lista_dispositivos" :mac_actual="mac_actual"></tabla>
+                    <div align="center">
+                        <v-btn
+                        justify="center"
+                        color="error"
+                        >
+                            Cerrar todas las sesiones
+                        </v-btn>
+                    </div>
+                </v-tab-item>
             </v-tabs-items>
+
             
         </div>
         </v-card-text>

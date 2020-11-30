@@ -25,6 +25,25 @@
                         :elevation="hover ? 10:2"
                         :class="{'on-hover':hover}"
                         to="indicadores">
+                            <v-img src="../assets/Foto/perfil-persona/fondo-indicador-empresa.png"
+                            height="200px"
+                            lazy-src="../assets/Foto/categorias/lazy-calzado-banner.png"
+                            class="grey lighten-2 align-center text-center"
+                            style="cursor:pointer"
+                            >
+                            <span class="display-1 primary  font-weight-black px-2 py-2">Indicadores de empresa</span>
+                            </v-img>    
+                        </v-card>
+                    </v-hover>
+                    <v-hover v-slot:default="{hover}">
+                        <v-card
+                        rounded
+                        hover
+                        outlined
+                        class="mb-3"
+                        :elevation="hover ? 10:2"
+                        :class="{'on-hover':hover}"
+                        to="indicadores">
                             <v-img src="../assets/Foto/perfil-persona/fondo-indicador.png"
                             height="200px"
                             lazy-src="../assets/Foto/categorias/lazy-calzado-banner.png"

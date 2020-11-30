@@ -5,7 +5,7 @@
         :portada="empresa.url_portada"
         :logo="empresa.url_logo"
         :cantidad_favoritos="empresa.cantidad_favoritos"></vistaportada>
-        <vistaproducto :producto="producto"></vistaproducto>
+        <vistaproducto :producto="producto" :redes="empresa.redes"></vistaproducto>
     </v-container>
 </template>
 <script>
@@ -24,7 +24,8 @@ export default {
                 razon_social :'',
                 url_portada :'',
                 url_logo :'',
-                cantidad_favoritos :''
+                cantidad_favoritos :'',
+                redes: ''
             },
             producto: ''
         }
@@ -38,7 +39,7 @@ export default {
             this.empresa.url_portada = data.url_portada
             this.empresa.url_logo = data.url_logo
             this.empresa.cantidad_favoritos = data.cantidad_favoritos
-            
+            this.empresa.redes = data.redes
             this.producto = data.producto[0]
         },
         obtener_producto () {

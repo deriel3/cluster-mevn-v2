@@ -1,6 +1,6 @@
 <template>
     <v-card>
-        <v-card-title><h1>Registro de producto</h1></v-card-title>
+        <v-card-title><h1 class="display-2">Registro de Producto</h1></v-card-title>
         <v-card-text>
             <v-text-field
             v-model="codigo"
@@ -91,6 +91,7 @@
                 :error-messages="imagenErrors"
                 @input="$v.imagen_portada.$touch()"
                 @blur="$v.imagen_portada.$touch()"
+                @change="validarimagen"
                 accept="image/x-png"
                 label="Foto del producto (PNG)"
                 ></v-file-input>
@@ -162,6 +163,17 @@ export default {
         }
     },
     methods: {
+        validarimagen (e) {
+            const file = e;
+            if(file && typeof file.type !== 'undefined')
+            {
+                const validImageTypes = 'image/png';
+                if (validImageTypes !== file.type) {
+                    this.imagen_portada = {}
+                    this.$toast.error('Solo se acepta formato PNG')
+                }
+            }    
+        },
         vaciar () {
             this.codigo = ''
             this.marca = ''

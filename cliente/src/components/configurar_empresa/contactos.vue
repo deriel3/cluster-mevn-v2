@@ -1,13 +1,13 @@
 <template>
     <v-container class="d-flex">
-        <div class="px-5 py-5" align="center" style="width:100%">
-            <v-card justify="space-around" width="60%" class="mx-5">
+        <div class="px-1 py-1" align="center" style="width:100%">
+            <v-card justify="space-around" width="100%">
                 <v-card-text>
                     <v-row v-for="item in data_contactos" :key="item._id">
                         <v-col
                         md="4"
                         s="12"
-                        cols="6">
+                        cols="4">
                             <v-select
                             v-model="item.tipo_dispositivo"
                             :items="medio_contacto"
@@ -18,7 +18,7 @@
                         <v-col
                         md="4"
                         s="12"
-                        cols="6">
+                        cols="4">
                             <v-text-field
                             v-model="item.contacto"
                             label="Contacto"
@@ -28,13 +28,14 @@
                         <v-col
                         md="4"
                         s="12"
-                        cols="6">
+                        cols="4">
                             <v-text-field
                             v-model="item.persona"
                             label="Persona"
                             required
                             ></v-text-field>
                         </v-col>
+                        
                     </v-row>
                     <small>*Para eliminar deje el campo de contacto en blanco</small>
                     <br>

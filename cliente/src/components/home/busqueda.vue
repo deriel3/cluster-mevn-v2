@@ -1,8 +1,8 @@
 <template>
     <div class="grey lighten-2 mt-5">
         <v-container>
-            <div class="display-1 container" align="center">
-                <h2 class="mt-5 mb-5">Busque el producto que desee</h2>
+            <div class="display-2 container" align="center">
+                <h3 class="mt-5 mb-5">Busque el producto que desee</h3>
             </div>
             <v-row>
                 <v-col

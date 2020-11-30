@@ -1,7 +1,7 @@
 <template>
-    <v-footer class="pt-16"
+    <v-footer class="pt-10"
     color="primary">
-    <v-row class="px-16 no-gutters align-start justify-center">
+    <v-row class=" align-start justify-center">
         <v-col
         class="px-5"
         md="4"

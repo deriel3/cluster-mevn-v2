@@ -4,8 +4,8 @@
     :src=url
   >
     <v-responsive>
-      <v-container fill-height class="px-5 py-12" style="width:90%">
-        <v-responsive class="d-flex align-center justify-center" style="height:100%; width:99%">
+      <v-container fill-height class="py-12" style="width:100%">
+        <v-responsive class="d-flex align-center justify-center" style="height:100%; width:100%">
           <v-row align="center">
             <v-col md="5" cols="12" class="px-10 py-10" style="background-color:rgba(191,191,191,0.6)">
               <div class="display-2 mb-4">

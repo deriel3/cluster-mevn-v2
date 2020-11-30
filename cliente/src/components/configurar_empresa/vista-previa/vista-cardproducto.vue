@@ -2,8 +2,21 @@
     <v-card>
         <v-img
         :src="imagen()"
+        :lazy-src="lazy_imagen()"
         height="300px"
         >
+            <template v-slot:placeholder>
+                <v-row
+                class="fill-height ma-0"
+                align="center"
+                justify="center"
+                >
+                    <v-progress-circular
+                    indeterminate
+                    color="grey lighten-5"
+                    ></v-progress-circular>
+                </v-row>
+            </template>        
             <v-app-bar
             flat
             color="rgba(0,0,0,0)">
@@ -142,10 +155,22 @@ export default {
     },
     methods: {
         imagen () {
-            let id = this.$store.state.user.id
-            let ruc = this.$route.params.ruc
-            let codigo = this.producto.codigo
-            return process.env.VUE_APP_URL_SERVER+"/assets/empresas/"+id+"/"+ruc+"-"+codigo.toLowerCase()+"/"+this.producto.imagen_portada.toLowerCase()
+            if ( this.producto.imagen_portada.toLowerCase() !== '' && this.producto.imagen_portada.toLowerCase() !== '')
+            {
+                let id = this.$store.state.user.id
+                let ruc = this.$route.params.ruc
+                let codigo = this.producto.codigo
+                return process.env.VUE_APP_URL_SERVER+"/api/imagen/producto?id="+id+"&imagen="+this.producto.imagen_portada.toLowerCase()+"&ruc="+ruc+"&codigo="+codigo.toLowerCase()
+            }
+        },
+        lazy_imagen () {
+            if ( this.producto.imagen_portada.toLowerCase() !== '' && this.producto.imagen_portada.toLowerCase() !== '')
+            {
+                let id = this.$store.state.user.id
+                let ruc = this.$route.params.ruc
+                let codigo = this.producto.codigo
+                return process.env.VUE_APP_URL_SERVER+"/api/imagen/producto?id="+id+"&imagen="+this.producto.imagen_portada.toLowerCase()+"&ruc="+ruc+"&codigo="+codigo.toLowerCase()+"&width=10&height=10"
+            }
         },
         imagen_categoria () {
             switch (this.producto.categoria)

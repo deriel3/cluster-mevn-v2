@@ -40,13 +40,28 @@
                         align="right"
                         min-width="300px"
                         min-height="200px"
-                        :src="imagen(index)">
+                        :src="imagen(index)"
+                        :lazy-src="lazy_imagen(index)"
+                        aspect-ratio="1"
+                        class="grey">
                         <v-btn
                         class="mx-3 my-3 red white--text"
                         @click="borrar_imagen(index)"
                         icon>
                             <v-icon>mdi-delete</v-icon>
                         </v-btn>
+                        <template v-slot:placeholder>
+                            <v-row
+                                class="fill-height ma-0"
+                                align="center"
+                                justify="center"
+                            >
+                                <v-progress-circular
+                                indeterminate
+                                color="grey lighten-5"
+                                ></v-progress-circular>
+                            </v-row>
+                        </template>
                         </v-img>
                     </v-col>
                 </v-row>
@@ -162,19 +177,40 @@ export default {
             }
         },
         imagen (index) {
-            let id = this.$store.state.user.id
-            let ruc = this.$route.params.ruc
-            let codigo = this.$route.params.codigo
-            return process.env.VUE_APP_URL_SERVER+"/assets/empresas/"+id+"/"+ruc+"-"+codigo.toLowerCase()+"/galeria/"+this.galeria[index].url_imagen.toLowerCase()
+            if (this.galeria[index].url_imagen !== '')
+            {
+                let id = this.$store.state.user.id
+                let ruc = this.$route.params.ruc
+                let codigo = this.$route.params.codigo
+                return process.env.VUE_APP_URL_SERVER+"/api/imagen/galeria?id="+id+"&imagen="+this.galeria[index].url_imagen.toLowerCase()+"&ruc="+ruc+"&codigo="+codigo.toLowerCase()
+            }
+        },
+        lazy_imagen (index) {
+            if (this.galeria[index].url_imagen !== '')
+            {
+                let id = this.$store.state.user.id
+                let ruc = this.$route.params.ruc
+                let codigo = this.$route.params.codigo
+                return process.env.VUE_APP_URL_SERVER+"/api/imagen/galeria?id="+id+"&imagen="+this.galeria[index].url_imagen.toLowerCase()+"&ruc="+ruc+"&codigo="+codigo.toLowerCase()+"&width=10&height=10"
+            }
         },
         vista_previa_cambio (e) {
             const file = e;
-            if(typeof file !== 'undefined')
+            if(typeof file !== 'undefined' && typeof file.type !== 'undefined')
             {
                 if(this.file)
                 {
-                    this.vista_previa = URL.createObjectURL(file);
-                    this.vista = true
+                    const validImageTypes = 'image/png';
+                    if (validImageTypes === file.type) {
+                        this.vista_previa = URL.createObjectURL(file);
+                        this.vista = true   
+                    }
+                    else
+                    {
+                        this.file = {}
+                        this.$toast.error('Solo se acepta formato PNG')
+                        this.vista = false
+                    }
                 }
                 else
                 {

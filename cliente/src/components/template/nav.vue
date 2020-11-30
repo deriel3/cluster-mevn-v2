@@ -46,16 +46,16 @@
       <v-btn class="mr-2 ml-2 hidden-sm-and-down"
         rounded
         text
-        to="/vender"
+        to="/empresas"
       >
-        <span>Proveedor</span>
+        <span>Empresas</span>
       </v-btn>
       <v-btn class="mr-2 ml-2 hidden-sm-and-down"
         rounded
         text
-        to="/comprar"
+        to="/Productos"
       >
-        <span>Comprador</span>
+        <span>Productos</span>
       </v-btn>
       <v-btn class="mr-2 ml-2 hidden-sm-and-down"
         rounded
@@ -69,6 +69,7 @@
       >
         <template v-slot:activator="{on,attrs}">
           <v-btn
+          class="hidden-sm-and-down"
             outlined
             color="success"
             dark
@@ -154,15 +155,85 @@
               <span>¿Como Funciona?</span>
             </v-list-item>
   
-            <v-list-item to="vender">
-              <span>Proveedor</span>
+            <v-list-item to="empresas">
+              <span>Empresas</span>
             </v-list-item>
             
-            <v-list-item to="comprar">
-              <span>Comprador</span>
+            <v-list-item to="productos">
+              <span>Productos</span>
             </v-list-item>
             <v-list-item to="buscar">
               <v-icon>mdi-magnify</v-icon>
+            </v-list-item>
+            <v-list-item>
+              <v-menu v-if="is_loged"
+        offset-y
+      >
+        <template v-slot:activator="{on,attrs}">
+          <v-btn
+            outlined
+            color="success"
+            dark
+            v-bind="attrs"
+            v-on="on"
+          >
+            <v-icon>
+              mdi-account
+            </v-icon>
+            {{usuario_loged}}
+          </v-btn>
+        </template>
+        <v-list >
+          <v-list-item align="center">
+            <v-btn
+            style="width:100%"
+            text
+            class="black--text"
+            @click="perfil">
+            Mi Perfil
+            </v-btn>
+          </v-list-item>
+          <v-list-item align="center">
+            <v-btn
+            style="width:100%"
+            text
+            class="red--text"
+            @click="cerrar_sesion">
+            Cerrar Sesion
+            </v-btn>
+          </v-list-item>
+        </v-list>
+      </v-menu>
+
+      <v-dialog v-else
+      transition="fab-transition"
+      v-model="dialog"
+      max-width="600px"
+      >
+        <template v-slot:activator="{on,attrs}">
+          <v-btn class="mr-2 ml-2 green darken-1 "
+            elevation="5"
+            color="white"
+            rounded
+            outlined
+            text
+            v-bind="attrs"
+            v-on="on"
+          >
+            <span>Iniciar Sesion</span>
+          </v-btn>
+        </template>
+        <div align="center" class="pt-5 pb-5 primary display-3">
+          <h4 v-if="tipo_formulario">Inicio de Sesion</h4>
+          <h4 v-else>Registro</h4>
+        </div>
+        <inicio v-if="tipo_formulario" @cierre_overlay="cierre_overlay"></inicio>
+        <registro v-else @inicio="cambio_vista"></registro>
+        <div align="center" class="pt-5 pb-5 primary">
+          <span v-if="tipo_formulario">No posee una cuenta? <a class="blue--text" @click="tipo_formulario=!tipo_formulario">Registrarme</a></span>
+          <span v-else>Ya esta registrado? <a class="blue--text" @click="tipo_formulario=!tipo_formulario">Inicie Sesion</a></span>
+        </div>
+      </v-dialog>
             </v-list-item>
           </v-list-item-group>
         </v-list>

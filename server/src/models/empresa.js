@@ -8,6 +8,9 @@ const empresa=new Schema({
         type:String,
         default:''
     },
+    precios:[{
+        dato:String,
+    }],
     estado:{
         type:Number,
         default:0
@@ -31,6 +34,24 @@ const empresa=new Schema({
         tipo_sede:String,
         direccion:String
     }],
+    redes:{
+        facebook:{
+            type:String,
+            default:''
+        },
+        instagram: {
+            type:String,
+            default:''
+        },
+        whats:{
+            type:String,
+            default:''
+        },
+        paginaweb:{
+            type:String,
+            default:''
+        }
+    },
     categorias:[],
     producto:[{
         tipo_producto:{
@@ -73,7 +94,7 @@ const empresa=new Schema({
             plantilla:String,
             suela:String
         },
-        colores:[{color:String, nombre:String}]
+        colores:[{color:String, nombre:String}],
     }],
     user_id:String,
 });

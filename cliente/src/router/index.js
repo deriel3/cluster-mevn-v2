@@ -91,6 +91,11 @@ const routes = [
           next();
       }
     }
+  },
+  {
+    path: '/empresas',
+    name: 'empresas',
+    component: () => import(/*webpackChunkName: "empresas" */ '../views/publico/empresas.vue')
   }
 ]
 

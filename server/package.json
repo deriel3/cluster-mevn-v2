@@ -23,6 +23,7 @@
     "morgan": "^1.10.0",
     "multer": "^1.4.2",
     "node-device-detector": "^1.2.9",
-    "nodemon": "^2.0.6"
+    "nodemon": "^2.0.6",
+    "sharp": "^0.26.3"
   }
 }

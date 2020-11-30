@@ -1,33 +1,21 @@
 <template>
     <v-container class="d-flex">
-        <div class="py-1" align="center" style="width:100%">
-            <v-card justify="space-around" width="100%" >
+        <div class=" py-1" align="center" style="width:100%">
+            <v-card justify="space-around" width="75%" >
                 <v-card-text>
-                    <v-row v-for="item in data_locacion" :key="item._id">
-                        <v-col
+                    <v-row>
+                        <v-col v-for="item in data_precios" :key="item.id"
                         md="4"
                         s="12"
                         cols="6">
-                            <v-select
-                            v-model="item.tipo_sede"
-                            :items="sede"
-                            label="Tipo de sede"
+                            <v-text-field
+                            v-model="item.dato"
+                            label="Precio"
                             required
-                            ></v-select>
-                        </v-col>
-                        <v-col
-                        md="8"
-                        s="12"
-                        cols="6">
-                            <v-textarea
-                            rows="2"
-                            v-model="item.direccion"
-                            label="Direccion"
-                            required
-                            ></v-textarea>
+                            ></v-text-field>
                         </v-col>
                     </v-row>
-                    <small>*Para eliminar deje en blanco el campo direccion</small>
+                    <small>*Para eliminar deje el campo de precio en blanco</small>
                     <br>
                     <v-btn
                     color="primary" class="black--text" @click="guardar_cambio">
@@ -43,22 +31,21 @@ import axios from 'axios'
 import { EventBus } from '../../EventBus/EventBus'
 export default {
     props: {
-        locaciones: ''
+        precios: ''
     },
 
     data () {
         return {
-            data_locacion: this.locaciones,
-            sede:["Planta de produccion", "Tienda propia", "Tienda externa", "Otro"]
+            data_precios: this.precios
         }
     },
     
     methods: {
         borrar_vacios () {
-            this.data_locacion = this.data_locacion.filter(item => {
-                return item.tipo_sede !== '' && item.direccion !== ''
+            this.data_precios = this.data_precios.filter(item => {
+                return item.dato !== ''
             })
-            this.$emit("actualizar_length_locaciones",this.data_locacion)
+            this.$emit("actualizar_length_precio",this.data_precios)
             
         },
         guardar_cambio () {
@@ -67,7 +54,7 @@ export default {
             let ruc = this.$route.params.ruc
             let token = this.$store.state.token
             let option = {
-                url: process.env.VUE_APP_URL_SERVER+"/api/act_locacion",
+                url: process.env.VUE_APP_URL_SERVER+"/api/act_precios_empresa",
                 method: 'POST',
                 headers: {
                     'access-token':token,
@@ -77,7 +64,7 @@ export default {
                 data: {
                     id: id,
                     ruc: ruc,
-                    locacion: this.data_locacion
+                    precios: this.data_precios
                 }
             }
             axios(option)

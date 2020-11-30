@@ -3,7 +3,7 @@
         <v-btn color="error" :to="{'name':'configrar-empresa', 'params':{'usuario':usuario , 'ruc':ruc}}" class="my-3">
             Volver
         </v-btn>
-        <v-btn color="success" class="my-3 mx-3">
+        <v-btn color="success" class="my-3 mx-3" :to="{name:'vista-previa-producto', params:{'usuario':usuario, 'ruc':ruc, 'codigo':codigo}}">
             Vista Previa
         </v-btn>
         <v-card>
@@ -72,7 +72,20 @@
                                     <v-btn v-else class="error" @click="cambiar_estado(0)">Desactivar</v-btn>
                                 </v-col>
                             </v-row>
-                            
+                        </div>
+                        <div class=" py-5">
+                            <v-row>
+                                <v-col md="8" cols="8">
+                                    <div class="ml-8">
+                                        <h1 class="display-1 red--text">Borrar Producto</h1>
+                                        <small class="red--text">Al borrar el producto este ya no podra ser recuperado y ademas toda la data historica del producto se borrara.
+                                        </small>
+                                    </div>
+                                </v-col>
+                                <v-col md="4" cols="4" align="center" class="mt-3">
+                                    <v-btn class="error" @click="borrar_producto()" > Borrar</v-btn>
+                                </v-col>
+                            </v-row>
                         </div>
                     </v-tab-item>
                 </v-tabs-items>
@@ -132,6 +145,35 @@ export default {
         }
     },
     methods: {
+        borrar_producto () {
+            let id = this.$store.state.user.id
+            let token = this.$store.state.token
+            let option = {
+                url: process.env.VUE_APP_URL_SERVER+'/api/borrar_producto',
+                method: "POST",
+                headers: {
+                    'access-token': token,
+                    'Accept':'application/json',
+                    'Content-type':'application/json'
+                },
+                data: {
+                    id: id,
+                    empresa_id: this.empresa_id,
+                    producto_id: this.id
+                }
+            }
+            axios(option)
+            .then(res => {
+                let data = res.data
+                switch (data.cod)
+                {
+                    case '200': this.$toast.success("Producto borrado")
+                    this.$router.push({'name':'configrar-empresa', params:{usuario:this.usuario, ruc:this.ruc}})
+                    break
+                    case '403': EventBus.$emit('force_logout')
+                }
+            })
+        },
         cambiar_estado (estado) {
             let mensaje = 'Producto {estado} satisfactoriamente.'
             if (estado === 1) {
